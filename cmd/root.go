@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"WorkReport/web"
-	"WorkReport/web/model/utils"
 	"github.com/spf13/cobra"
 	"log"
 
@@ -54,11 +52,11 @@ func Execute() {
 
 func init() {
 	//cobra.OnInitialize(initConfig)
-	runCmd.Flags().StringVarP(&Port, "port", "P", "8080", "web server listen port.")
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(updateCmd)
+	rootCmd.AddCommand(resetCmd)
 }
 
 var versionCmd = &cobra.Command{
@@ -74,13 +72,3 @@ var versionCmd = &cobra.Command{
 }
 
 
-var runCmd = &cobra.Command{
-	Use:   "run",
-	Short: "run server.",
-	Run: func(cmd *cobra.Command, args []string) {
-		utils.InitDB(DBUser, DBPwd, DBHost, DBPort, DBName )
-		//fmt.Printf("\033[32m%s\033[0m",Logo)
-		fmt.Printf("\r  \033[36%s\033[m  ", Logo)
-		web.StrartServer(Port)
-	},
-}

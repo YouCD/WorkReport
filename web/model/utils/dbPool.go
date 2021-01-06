@@ -20,7 +20,7 @@ var (
 
 //包初始化函数，golang特性，每个包初始化的时候会自动执行init函数，这里用来初始化gorm。
 func InitDB(DBUser, DBPwd, DBHost, DBPort, DBName string) {
-//func init() {
+	//func init() {
 	//DSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", "root", "P@ssw0rd", "127.0.0.1", "3306", "worklog") // 连接数据库
 	DSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", DBUser, DBPwd, DBHost, DBPort, DBName) // 连接数据库
 	newLogger := logger.New(
@@ -58,55 +58,69 @@ func InitDB(DBUser, DBPwd, DBHost, DBPort, DBName string) {
 
 }
 
-
 //不用担心协程并发使用同样的db对象会共用同一个连接，db对象在调用他的方法的时候会从数据库连接池中获取新的连接
 func GetDB() *gorm.DB {
 	return _db
 }
 
-func InitTables(DBUser, DBPwd, DBHost, DBPort, DBName, username,password string) (err error){
+func InitTables(DBUser, DBPwd, DBHost, DBPort, DBName, username, password string) (err error) {
 	//创建表
 	DSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", DBUser, DBPwd, DBHost, DBPort, DBName) // 连接数据库
-	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
+	_db, err = gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	//db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4").Migrator().CreateTable(&model.UserTable{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
-	err = db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4").AutoMigrate(&model.SysDic{}, &model.UserTable{}, &model.WorkContent{})
+	err = _db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4").AutoMigrate(&model.SysDic{}, &model.UserTable{}, &model.WorkContent{})
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	//bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	//if err != nil {
-	//	log.Println(err)
-	//	return err
-	//}
-	hashPW, err :=PasswordHash(password)
+	err = CreateOrUpdateUser(username, password)
 	if err != nil {
 		log.Println(err)
 		return err
 	}
-
-	user := model.UserTable{
-		UserName:   username,
-		Password:   hashPW,
-		CreateTime: time.Now().Unix(),
-	}
-
-	err=db.Create(&user).Error
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	log.Printf("The default username is %s password is %s", user.UserName, password)
+	log.Printf("The default username is %s password is %s", username, password)
 	return nil
 }
-
 
 func PasswordHash(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
+}
+
+func CreateOrUpdateUser(username, password string) (err error) {
+	var userModel model.UserTable
+	err = _db.Model(&model.UserTable{}).Where("user_name =?", username).Scan(&userModel).Error
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	hashPW, err := PasswordHash(password)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	if userModel.UserName == "" {
+		user := model.UserTable{
+			UserName:   username,
+			Password:   hashPW,
+			CreateTime: time.Now().Unix(),
+		}
+		err = _db.Create(&user).Error
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+	} else if userModel.UserName != "" {
+		err = _db.Model(&model.UserTable{}).Where("user_name = ?", username).Update("password", hashPW).Error
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+	}
+	return nil
 }

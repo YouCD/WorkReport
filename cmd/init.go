@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 )
+
 var (
 	DBUser   string
 	DBPwd    string
@@ -25,14 +26,14 @@ func init() {
 	initCmd.Flags().StringVarP(&password, "password", "w", "P@ssw0rd", "login user password.")
 
 }
+
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "init database.",
 	Run: func(cmd *cobra.Command, args []string) {
-
-		if DBName != "" &&DBPwd!=""{
-			err:=utils.InitTables(DBUser, DBPwd, DBHost, DBPort, DBName, username, password)
-			if err!=nil{
+		if DBUser != "" && DBPwd != "" && DBHost != "" && DBPort != "" && DBName != "" && username != "" && password != "" {
+			err := utils.InitTables(DBUser, DBPwd, DBHost, DBPort, DBName, username, password)
+			if err != nil {
 				log.Println(err)
 				return
 			}
