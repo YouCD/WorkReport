@@ -1,0 +1,9 @@
+dist
+web/dist
+packrd
+main-packr.go
+WorkReport
+.idea
+WorkReportFrontend
+bin
+web/Weblib/Weblib-packr.go
