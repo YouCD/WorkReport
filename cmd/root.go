@@ -25,6 +25,15 @@ var (
 	buildUser string
 )
 
+const Logo = `                                                                      
+m     m               #      mmmmm                                m   
+#  #  #  mmm    m mm  #   m  #   "#  mmm   mmmm    mmm    m mm  mm#mm 
+" #"# # #" "#   #"  " # m"   #mmmm" #"  #  #" "#  #" "#   #"  "   #   
+ ## ##" #   #   #     #"#    #   "m #""""  #   #  #   #   #       #   
+ #   #  "#m#"   #     #  "m  #    " "#mm"  ##m#"  "#m#"   #       "mm 
+                                           #                          
+                                           "                          
+`
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   Name,
@@ -70,6 +79,8 @@ var runCmd = &cobra.Command{
 	Short: "run server.",
 	Run: func(cmd *cobra.Command, args []string) {
 		utils.InitDB(DBUser, DBPwd, DBHost, DBPort, DBName )
+		//fmt.Printf("\033[32m%s\033[0m",Logo)
+		fmt.Printf("\r  \033[36%s\033[m  ", Logo)
 		web.StrartServer(Port)
 	},
 }

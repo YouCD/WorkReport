@@ -78,17 +78,8 @@ var updateCmd = &cobra.Command{
 		//系统类型
 		OS := runtime.GOOS
 		v := GetRelease(OS)
-
 		if Version != v.TagName {
 			path, _ = os.Executable()
-			//当前运行程序的路径
-			//fmt.Println(path)
-			//获取程序名
-			//pathSlic:=strings.Split(path,"/")
-			//swFileName:=pathSlic[len(pathSlic)-1]
-			//当前运行程序运行的目录
-			//dir := filepath.Dir(path)
-			//fmt.Println(dir)
 			DownloadFileProgress(v.DownloadUrl, path+".tmp")
 		} else {
 			log.Println(fmt.Sprintf("version: %s. The current version is the latest version.", Version))
@@ -104,10 +95,8 @@ type Reader struct {
 
 func (r *Reader) Read(p []byte) (n int, err error) {
 	n, err = r.Reader.Read(p)
-
 	r.Current += int64(n)
 	log.Printf("\r进度 %.2f%%", float64(r.Current*10000/r.Total)/100)
-
 	return
 }
 

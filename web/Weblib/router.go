@@ -41,6 +41,7 @@ func StaticServe(urlPrefix string, fs *packr.Box) gin.HandlerFunc {
 
 
 func NewGinRouter() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
 	ginRouter := gin.Default()
 	box := packr.New("gemini", "../dist")
 	ginRouter.Use(StaticServe("/", box))
