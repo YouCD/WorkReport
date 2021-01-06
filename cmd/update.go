@@ -92,7 +92,6 @@ var updateCmd = &cobra.Command{
 		//	Name:     "",
 		//	FilePath: "",
 		//}
-		Version="v0.1.3"
 		if Version!=v.TagName {
 			path, _ = os.Executable()
 			//当前运行程序的路径
