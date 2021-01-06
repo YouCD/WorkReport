@@ -16,15 +16,12 @@ import (
 var (
 	path string
 )
+
 type ReleaseVersion struct {
 	TagName     string `json:"tag_nmae"`
 	SwName      string `json:"sw_name"`
 	DownloadUrl string `json:"download_url"`
 }
-
-//func init() {
-//	updateCmd.Flags().BoolVarP(&UpdateFlag, "update", "u", true, "update the WorkReport server")
-//}
 
 func GetRelease(OS string) (v ReleaseVersion) {
 
@@ -38,44 +35,37 @@ func GetRelease(OS string) (v ReleaseVersion) {
 	if err != nil {
 		log.Println(err)
 	}
-	vList:=make([]ReleaseVersion,0)
-	count:=gjson.Get(string(bytes), "assets.#").Int()
+	vList := make([]ReleaseVersion, 0)
+	count := gjson.Get(string(bytes), "assets.#").Int()
 
-	for i:=0;i<int(count);i++ {
+	for i := 0; i < int(count); i++ {
 		v.TagName = gjson.Get(string(bytes), "tag_name").Str
-		v.SwName = gjson.Get(string(bytes), fmt.Sprintf("assets.%d.name",i)).Str
-		v.DownloadUrl = gjson.Get(string(bytes), fmt.Sprintf("assets.%d.browser_download_url",i)).Str
-		vList=append(vList, v)
+		v.SwName = gjson.Get(string(bytes), fmt.Sprintf("assets.%d.name", i)).Str
+		v.DownloadUrl = gjson.Get(string(bytes), fmt.Sprintf("assets.%d.browser_download_url", i)).Str
+		vList = append(vList, v)
 	}
 	switch OS {
 	case "linux":
-		for _,v:=range vList{
-			if strings.Contains(v.SwName,"linux"){
+		for _, v := range vList {
+			if strings.Contains(v.SwName, "linux") {
 				return v
 			}
 		}
 	case "darwin":
-		for _,v:=range vList{
-			if strings.Contains(v.SwName,"darwin"){
+		for _, v := range vList {
+			if strings.Contains(v.SwName, "darwin") {
 				return v
 			}
 		}
 	case "windows":
-		for _,v:=range vList{
-			if strings.Contains(v.SwName,"windows"){
+		for _, v := range vList {
+			if strings.Contains(v.SwName, "windows") {
 				return v
 			}
 		}
 	}
 	return v
 }
-
-type FileInfo struct {
-	Name string
-	FilePath string
-	
-}
-
 
 
 var updateCmd = &cobra.Command{
@@ -86,13 +76,10 @@ var updateCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		//系统类型
-		OS:=runtime.GOOS
-		v:=GetRelease(OS)
-		//var file=FileInfo{
-		//	Name:     "",
-		//	FilePath: "",
-		//}
-		if Version!=v.TagName {
+		OS := runtime.GOOS
+		v := GetRelease(OS)
+
+		if Version != v.TagName {
 			path, _ = os.Executable()
 			//当前运行程序的路径
 			//fmt.Println(path)
@@ -102,26 +89,24 @@ var updateCmd = &cobra.Command{
 			//当前运行程序运行的目录
 			//dir := filepath.Dir(path)
 			//fmt.Println(dir)
-			DownloadFileProgress(v.DownloadUrl,path+".tmp")
-		}else {
-			log.Println(fmt.Sprintf("version: %s. The current version is the latest version.",Version))
+			DownloadFileProgress(v.DownloadUrl, path+".tmp")
+		} else {
+			log.Println(fmt.Sprintf("version: %s. The current version is the latest version.", Version))
 		}
 	},
 }
 
-
-
 type Reader struct {
 	io.Reader
-	Total int64
+	Total   int64
 	Current int64
 }
 
-func (r *Reader) Read(p []byte) (n int, err error){
+func (r *Reader) Read(p []byte) (n int, err error) {
 	n, err = r.Reader.Read(p)
 
 	r.Current += int64(n)
-	log.Printf("\r进度 %.2f%%", float64(r.Current * 10000/ r.Total)/100)
+	log.Printf("\r进度 %.2f%%", float64(r.Current*10000/r.Total)/100)
 
 	return
 }
@@ -131,7 +116,7 @@ func DownloadFileProgress(url, filename string) {
 	if err != nil {
 		panic(err)
 	}
-	defer func() {_ = r.Body.Close()}()
+	defer func() { _ = r.Body.Close() }()
 	f, err := os.Create(filename)
 	// 更改权限
 	err = f.Chmod(0775)
@@ -141,11 +126,10 @@ func DownloadFileProgress(url, filename string) {
 	if err != nil {
 		panic(err)
 	}
-	defer func() {_ = f.Close()}()
+	defer func() { _ = f.Close() }()
 	reader := &Reader{
 		Reader: r.Body,
-		Total: r.ContentLength,
+		Total:  r.ContentLength,
 	}
 	_, _ = io.Copy(f, reader)
 }
-
