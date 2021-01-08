@@ -12,17 +12,51 @@ type _WorkContentMgr struct {
 
 
 
+const (
+	BaseSQL1="left join sys_dic sd on sd.id = work_content.type1 left join sys_dic on sys_dic.id = work_content.type2"
+	BaseSQL2="work_content.id,work_content.date,work_content.content,sd.description as type1,sd.id as Type1ID,sys_dic.description as type2,sys_dic.id as Type2ID"
 
+)
 
 
 func (obj *_WorkContentMgr) Pager(pageIndex, pageSize int) (result []*WorkContentResp, count int64) {
-	resp := obj.DB.Table(obj.GetTableName()).Joins("left join sys_dic sd on sd.id = work_content.type1 left join sys_dic on sys_dic.id = work_content.type2")
+	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1)
 
 	resp.Count(&count) //总行数
-	resp.Select("work_content.id,work_content.date,work_content.content,sd.description as type1,sd.id as Type1ID,sys_dic.description as type2,sys_dic.id as Type2ID ").Offset((pageIndex - 1) * pageSize).Limit(pageSize).Scan(&result)
+	resp.Select(BaseSQL2).Offset((pageIndex - 1) * pageSize).Limit(pageSize).Order("work_content.date desc").Scan(&result)
 	return
 }
 
+func (obj *_WorkContentMgr) PagerFromType(typeID,pageIndex, pageSize int) (result []*WorkContentResp, count int64) {
+	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("type1 = ? or type2 =?",typeID,typeID)
+
+	resp.Count(&count) //总行数
+	resp.Select(BaseSQL2).Offset((pageIndex - 1) * pageSize).Limit(pageSize).Scan(&result)
+	return
+}
+
+func (obj *_WorkContentMgr) PagerFromWeek(weekStartDate,weekEndDate int64) (result []*WorkContentResp, count int64) {
+	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("date >=? and date <=?",weekStartDate,weekEndDate)
+
+	resp.Count(&count) //总行数
+	resp.Select(BaseSQL2).Scan(&result)
+	return
+}
+
+func (obj *_WorkContentMgr) PagerFromContent(content string) (result []*WorkContentResp, count int64) {
+	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("content like ?","%"+content+"%")
+
+	resp.Count(&count) //总行数
+	resp.Select(BaseSQL2).Scan(&result)
+	return
+}
+
+func (obj *_WorkContentMgr) PagerFromDate(Date int64) (result []*WorkContentResp, count int64) {
+	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("date = ?",Date)
+	resp.Count(&count) //总行数
+	resp.Select(BaseSQL2).Scan(&result)
+	return
+}
 
 // WorkContentMgr open func
 func WorkContentMgr(db *gorm.DB) *_WorkContentMgr {
