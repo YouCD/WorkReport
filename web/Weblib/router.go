@@ -73,8 +73,16 @@ func NewGinRouter() *gin.Engine {
 		workLog.Handle("GET", "/workType", getWorkType)
 		//修改指定工作类别
 		workLog.Handle("PUT", "/workType", editWorkType)
-		////修改WorkLog
-		//workLog.Handle("PUT", "/workLog", modifiyWorkLoag)
+		//通过type ID 获取设备工作内容
+		workLog.Handle("GET", "/workLogFromType", getWorkLogFromType)
+		//获取本周日志
+		workLog.Handle("GET", "/workLogFromWeek", getWorkLogFromWeek)
+		//获取本月日志
+		workLog.Handle("GET", "/workLogFromMonth", getWorkLogFromWeek)
+		//通过内容搜索日志
+		workLog.Handle("GET", "/workLogFromContent", getWorkLogFromContent)
+		//通过日期搜索日志
+		workLog.Handle("GET", "/workLogFromDate", getWorkLogFromDate)
 
 	}
 
