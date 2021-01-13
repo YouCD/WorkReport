@@ -264,12 +264,13 @@ func GetFirstDateOfWeek()int64 {
 }
 func getWorkLogFromWeek(ctx *gin.Context) {
 	h := model.WorkContentMgr(utils.GetDB())
-	result, count := h.PagerFromWeek(GetFirstDateOfWeek(),GetFirstDateOfWeek()+604799)
-	var tmp WorkContentRespList
-	tmp.WorkContentRespList = result
-	tmp.Sum = int(count)
+	result, _ := h.PagerFromWeek(GetFirstDateOfWeek(),GetFirstDateOfWeek()+604799)
+	r:=make(map[string][]string,0 )
+	for _,v:=range result{
+		r[v.Type1] = append(r[v.Type1], v.Content)
+	}
 	suRsp.Msg = "获取成功"
-	suRsp.Data = tmp
+	suRsp.Data = r
 	ctx.JSON(200, suRsp)
 }
 
