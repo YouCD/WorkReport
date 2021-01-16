@@ -83,6 +83,10 @@ func NewGinRouter() *gin.Engine {
 		workLog.Handle("GET", "/workLogFromContent", getWorkLogFromContent)
 		//通过日期搜索日志
 		workLog.Handle("GET", "/workLogFromDate", getWorkLogFromDate)
+		//通过type1获得总数量
+		workLog.Handle("GET", "/type1Count", gettype1Count)
+		//通过type2获得总数量
+		workLog.Handle("GET", "/type2Count", gettype2Count)
 
 	}
 
