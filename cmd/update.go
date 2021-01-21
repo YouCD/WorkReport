@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	path string
+	path  string
+	Force bool
 )
 
 type ReleaseVersion struct {
@@ -23,6 +24,9 @@ type ReleaseVersion struct {
 	DownloadUrl string `json:"download_url"`
 }
 
+func init() {
+	updateCmd.Flags().BoolVarP(&Force, "force", "f", false, "force updating.")
+}
 func GetRelease(OS string) (v ReleaseVersion) {
 
 	s := "https://api.github.com/repos/youcd/WorkReport/releases/latest"
@@ -67,7 +71,6 @@ func GetRelease(OS string) (v ReleaseVersion) {
 	return v
 }
 
-
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "update the WorkReport server",
@@ -78,12 +81,19 @@ var updateCmd = &cobra.Command{
 		//系统类型
 		OS := runtime.GOOS
 		v := GetRelease(OS)
-		if Version != v.TagName {
+		if Force {
 			path, _ = os.Executable()
 			DownloadFileProgress(v.DownloadUrl, path+".tmp")
+			return
+		} else if Version != v.TagName {
+			path, _ = os.Executable()
+			DownloadFileProgress(v.DownloadUrl, path+".tmp")
+
 		} else {
-			log.Println(fmt.Sprintf("version: %s. The current version is the latest version.", Version))
+			log.Println(fmt.Sprintf("version: %s. The version is latest version.", Version))
+			return
 		}
+
 	},
 }
 
