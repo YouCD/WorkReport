@@ -17,6 +17,7 @@ import (
 var (
 	path  string
 	Force bool
+	GitHubRelease ="https://api.github.com/repos/youcd/WorkReport/releases/latest"
 )
 
 type ReleaseVersion struct {
@@ -30,8 +31,7 @@ func init() {
 }
 func GetRelease(OS string) (v ReleaseVersion) {
 
-	s := "https://api.github.com/repos/youcd/WorkReport/releases/latest"
-	resp, err := http.Get(s)
+	resp, err := http.Get(GitHubRelease)
 	if err != nil {
 		log.Println(err)
 	}
