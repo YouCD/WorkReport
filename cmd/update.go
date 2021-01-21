@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/schollz/progressbar/v3"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"io"
@@ -103,13 +104,6 @@ type Reader struct {
 	Current int64
 }
 
-func (r *Reader) Read(p []byte) (n int, err error) {
-	n, err = r.Reader.Read(p)
-	r.Current += int64(n)
-	log.Printf("\r进度 %.2f%%", float64(r.Current*10000/r.Total)/100)
-	return
-}
-
 func DownloadFileProgress(url, filename string) {
 	r, err := http.Get(url)
 	if err != nil {
@@ -122,13 +116,10 @@ func DownloadFileProgress(url, filename string) {
 	if err != nil {
 		panic(err)
 	}
-	if err != nil {
-		panic(err)
-	}
 	defer func() { _ = f.Close() }()
-	reader := &Reader{
-		Reader: r.Body,
-		Total:  r.ContentLength,
-	}
-	_, _ = io.Copy(f, reader)
+	bar := progressbar.DefaultBytes(
+		r.ContentLength,
+		"下载中",
+	)
+	io.Copy(io.MultiWriter(f, bar), r.Body)
 }
