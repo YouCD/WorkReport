@@ -49,7 +49,6 @@ func Update(ctx *gin.Context) {
 		if updateFlag {
 			suRsp.Msg = "更新完成，请重启软件"
 			ctx.JSON(200, suRsp)
-			updateFlag = false
 			isUpdated = true
 			path, _ := os.Executable()
 			err := syscall.Exec(path, os.Args, os.Environ())
