@@ -29,12 +29,11 @@ func UpdateCheck(ctx *gin.Context) {
 		versionInfo = common.GetRelease()
 		if common.Version != versionInfo.TagName {
 			suRsp.Data = versionInfo
-			suRsp.Msg = fmt.Sprintf("有新版本可以更新!  当前版本%s,最新版本%s", common.Version, versionInfo.TagName)
+			suRsp.Msg = fmt.Sprintf("有新版本可以更新!  当前版本%s,最新版本%s 点击更新", common.Version, versionInfo.TagName)
 			ctx.JSON(200, suRsp)
 		} else {
-			errrsp.Msg = "已是最新版本"
-			ctx.JSON(200, suRsp)
-
+			errrsp.Msg = fmt.Sprintf("已是最新版本%s", common.Version)
+			ctx.JSON(200, errrsp)
 		}
 	} else {
 		errrsp.Msg = "更新完成，请重启软件"
@@ -50,9 +49,9 @@ func Update(ctx *gin.Context) {
 			ctx.JSON(200, suRsp)
 			updateFlag = false
 			isUpdated = true
-		} else {
+		} else if !updateFlag {
 			errrsp.Msg = "更新中..."
-			ctx.JSON(200, suRsp)
+			ctx.JSON(200, errrsp)
 		}
 
 	} else if method == "" {
