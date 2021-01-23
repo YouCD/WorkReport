@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"os"
+	"syscall"
 )
 
 var (
@@ -49,6 +51,11 @@ func Update(ctx *gin.Context) {
 			ctx.JSON(200, suRsp)
 			updateFlag = false
 			isUpdated = true
+			path, _ := os.Executable()
+			err := syscall.Exec(path, os.Args, os.Environ())
+			if err != nil {
+				log.Fatal(err)
+			}
 		} else if !updateFlag {
 			errrsp.Msg = "更新中..."
 			ctx.JSON(200, errrsp)
