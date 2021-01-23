@@ -5,11 +5,11 @@ import (
 	"fmt"
 )
 
-func StrartServer( port string)  {
-	fmt.Printf("web server listen on %s", port)
+func StrartServer(port string) {
+	fmt.Printf("\nweb server listen on %s\n", port)
 	router := Weblib.NewGinRouter()
-	if port!=""{
-		router.Run(":"+port)
+	if port != "" {
+		router.Run(":" + port)
 	}
 	router.Run()
 }

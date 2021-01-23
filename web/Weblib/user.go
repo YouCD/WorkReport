@@ -1,11 +1,10 @@
 package Weblib
 
 import (
-	"bytes"
-	"encoding/json"
 	"WorkReport/web/model"
 	"WorkReport/web/model/utils"
-
+	"bytes"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 )
@@ -33,12 +32,6 @@ func Login(ctx *gin.Context) {
 		ctx.JSON(500, errrsp)
 		return
 	}
-
-	//str,err:=PasswordHash("P@ssw0rd")
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//fmt.Println(str)
 
 	h := model.UserTableMgr(utils.GetDB())
 	u, err := h.GetFromUserName(user.Username)

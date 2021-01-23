@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"WorkReport/common"
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"
@@ -15,12 +16,7 @@ var (
 
 	Port string
 
-	//version info
-	Version   string
-	commitID  string
-	buildTime string
-	goVersion string
-	buildUser string
+
 )
 
 const Logo = `                                                                      
@@ -63,11 +59,11 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number of workLog",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Version:   %s\n", Version)
-		fmt.Printf("CommitID:  %s\n", commitID)
-		fmt.Printf("BuildTime: %s\n", buildTime)
-		fmt.Printf("GoVersion: %s\n", goVersion)
-		fmt.Printf("BuildUser: %s\n", buildUser)
+		fmt.Printf("Version:   %s\n", common.Version)
+		fmt.Printf("CommitID:  %s\n", common.CommitID)
+		fmt.Printf("BuildTime: %s\n", common.BuildTime)
+		fmt.Printf("GoVersion: %s\n", common.GoVersion)
+		fmt.Printf("BuildUser: %s\n", common.BuildUser)
 	},
 }
 

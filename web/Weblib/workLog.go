@@ -250,7 +250,7 @@ func getWorkLogFromType(ctx *gin.Context) {
 }
 
 //获取本周周一的日期
-func GetFirstDateOfWeek()int64 {
+func GetFirstDateOfWeek() int64 {
 	now := time.Now()
 
 	offset := int(time.Monday - now.Weekday())
@@ -264,9 +264,9 @@ func GetFirstDateOfWeek()int64 {
 }
 func getWorkLogFromWeek(ctx *gin.Context) {
 	h := model.WorkContentMgr(utils.GetDB())
-	result, _ := h.PagerFromWeek(GetFirstDateOfWeek(),GetFirstDateOfWeek()+604799)
-	r:=make(map[string][]string,0 )
-	for _,v:=range result{
+	result, _ := h.PagerFromWeek(GetFirstDateOfWeek(), GetFirstDateOfWeek()+604799)
+	r := make(map[string][]string, 0)
+	for _, v := range result {
 		r[v.Type1] = append(r[v.Type1], v.Content)
 	}
 	suRsp.Msg = "获取成功"
@@ -275,7 +275,7 @@ func getWorkLogFromWeek(ctx *gin.Context) {
 }
 
 func getWorkLogFromContent(ctx *gin.Context) {
-	content :=ctx.Query("content")
+	content := ctx.Query("content")
 	h := model.WorkContentMgr(utils.GetDB())
 	result, count := h.PagerFromContent(content)
 	var tmp WorkContentRespList
@@ -287,7 +287,7 @@ func getWorkLogFromContent(ctx *gin.Context) {
 }
 
 func getWorkLogFromDate(ctx *gin.Context) {
-	date :=utils.Str2int64(ctx.Query("date"))
+	date := utils.Str2int64(ctx.Query("date"))
 	h := model.WorkContentMgr(utils.GetDB())
 	result, count := h.PagerFromDate(date)
 	var tmp WorkContentRespList
@@ -300,24 +300,24 @@ func getWorkLogFromDate(ctx *gin.Context) {
 
 func gettype1Count(ctx *gin.Context) {
 	type CountType1 struct {
-		Count int `json:"count"`
+		Count int    `json:"count"`
 		Type1 string `json:"type1"`
 	}
-	CountType1List:=make([]CountType1,0)
+	CountType1List := make([]CountType1, 0)
 	h := model.WorkContentMgr(utils.GetDB())
 	err := h.Select("count(type1) as `Count`,sys_dic.description as Type1").Joins("left join sys_dic on work_content.type1=sys_dic.id").Group("type1").Scan(&CountType1List).Error
-	if err!=nil{
+	if err != nil {
 		errrsp.Msg = ErrToMsg(err)
 		ctx.JSON(200, errrsp)
 		return
 	}
-	type  respCountType1 struct {
-		CountList []int `json:"count_list"`
+	type respCountType1 struct {
+		CountList []int    `json:"count_list"`
 		Type1List []string `json:"type1_list"`
 	}
 
 	var tmp respCountType1
-	for _,v:=range CountType1List{
+	for _, v := range CountType1List {
 		tmp.CountList = append(tmp.CountList, v.Count)
 		tmp.Type1List = append(tmp.Type1List, v.Type1)
 
@@ -328,33 +328,32 @@ func gettype1Count(ctx *gin.Context) {
 }
 
 func gettype2Count(ctx *gin.Context) {
-	type1ID :=utils.Str2int64(ctx.Query("id"))
+	type1ID := utils.Str2int64(ctx.Query("id"))
 
 	type CountType2 struct {
-		Count int `json:"count"`
+		Count int    `json:"count"`
 		Type2 string `json:"type2"`
 	}
-	CountType2List:=make([]CountType2,0)
+	CountType2List := make([]CountType2, 0)
 	h := model.WorkContentMgr(utils.GetDB())
-	err := h.Select("count(type2) as `Count`,sys_dic.description as Type2").Joins("left join sys_dic on work_content.type2=sys_dic.id").Where("type1 =?",type1ID).Group("type2").Scan(&CountType2List).Error
-	if err!=nil{
+	err := h.Select("count(type2) as `Count`,sys_dic.description as Type2").Joins("left join sys_dic on work_content.type2=sys_dic.id").Where("type1 =?", type1ID).Group("type2").Scan(&CountType2List).Error
+	if err != nil {
 		errrsp.Msg = ErrToMsg(err)
 		ctx.JSON(200, errrsp)
 		return
 	}
-	type  respCountType1 struct {
-		CountList []int `json:"count_list"`
+	type respCountType1 struct {
+		CountList []int    `json:"count_list"`
 		Type2List []string `json:"type2_list"`
 	}
 
 	var tmp respCountType1
-	for _,v:=range CountType2List{
+	for _, v := range CountType2List {
 		tmp.CountList = append(tmp.CountList, v.Count)
 		tmp.Type2List = append(tmp.Type2List, v.Type2)
-
 	}
+
 	suRsp.Msg = "获取成功"
 	suRsp.Data = tmp
 	ctx.JSON(200, suRsp)
 }
-

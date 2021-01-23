@@ -24,7 +24,6 @@ func exists(fs *packr.Box, prefix string, filepath string) bool {
 	return false
 }
 
-
 func StaticServe(urlPrefix string, fs *packr.Box) gin.HandlerFunc {
 	fileserver := http.FileServer(fs)
 	if urlPrefix != "" {
@@ -38,8 +37,6 @@ func StaticServe(urlPrefix string, fs *packr.Box) gin.HandlerFunc {
 	}
 }
 
-
-
 func NewGinRouter() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	ginRouter := gin.Default()
@@ -51,7 +48,7 @@ func NewGinRouter() *gin.Engine {
 	//用户登入
 	ginRouter.Handle("POST", "/login", Login)
 
-
+	ginRouter.Use(JWTAuthMiddleware())
 	workLog := ginRouter.Group("/w")
 	{
 		//添加workLog
@@ -89,6 +86,8 @@ func NewGinRouter() *gin.Engine {
 		workLog.Handle("GET", "/type2Count", gettype2Count)
 
 	}
+	ginRouter.Handle("GET", "/updateCheck", UpdateCheck)
+	ginRouter.Handle("GET", "/update", Update)
 
 	return ginRouter
 }

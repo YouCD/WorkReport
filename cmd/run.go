@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"WorkReport/common"
 	"WorkReport/web"
 	"WorkReport/web/model/utils"
 	"fmt"
@@ -23,6 +24,7 @@ var runCmd = &cobra.Command{
 			utils.InitDB(DBUser, DBPwd, DBHost, DBPort, DBName)
 			//fmt.Printf("\033[32m%s\033[0m",Logo)
 			fmt.Printf("\r  \033[36%s\033[m  ", Logo)
+			common.OpenBrowser(fmt.Sprintf("http://%s:%s/#/", "127.0.0.1", Port))
 			web.StrartServer(Port)
 
 		}
