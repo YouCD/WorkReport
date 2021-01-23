@@ -4,6 +4,7 @@ import (
 "context"
 	"fmt"
 	"gorm.io/gorm"
+	"os"
 )
 
 type _WorkContentMgr struct {
@@ -61,7 +62,8 @@ func (obj *_WorkContentMgr) PagerFromDate(Date int64) (result []*WorkContentResp
 // WorkContentMgr open func
 func WorkContentMgr(db *gorm.DB) *_WorkContentMgr {
 	if db == nil {
-		panic(fmt.Errorf("WorkContentMgr need init by db"))
+		fmt.Println(fmt.Errorf("WorkContentMgr need init by db"))
+		os.Exit(1)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	return &_WorkContentMgr{_BaseMgr: &_BaseMgr{DB: db.Table("work_content"), isRelated: globalIsRelated, ctx: ctx, cancel: cancel, timeout: -1}}

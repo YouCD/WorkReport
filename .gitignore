@@ -7,3 +7,4 @@ WorkReport
 WorkReportFrontend
 bin
 web/Weblib/Weblib-packr.go
+.DS_Store

@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func StrartServer(port string) {
+func StartServer(port string) {
 	fmt.Printf("\nweb server listen on %s\n", port)
 	router := Weblib.NewGinRouter()
 	if port != "" {

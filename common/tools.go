@@ -19,7 +19,7 @@ const (
 )
 
 var commands = map[string]string{
-	"windows": "cmd /c start",
+	"windows": "explorer.exe",
 	"darwin":  "open",
 	"linux":   "xdg-open",
 }
@@ -77,14 +77,16 @@ func GetRelease() (v ReleaseVersion) {
 func DownloadFileProgress(url, filename string) {
 	r, err := http.Get(url)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		os.Exit(1)
 	}
 	defer func() { _ = r.Body.Close() }()
 	f, err := os.Create(filename)
 	// 更改权限
 	err = f.Chmod(0775)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		os.Exit(1)
 	}
 	defer func() { _ = f.Close() }()
 	bar := progressbar.DefaultBytes(

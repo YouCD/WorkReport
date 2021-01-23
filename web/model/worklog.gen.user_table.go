@@ -1,9 +1,11 @@
 package model
 
 import (
-"context"
+	"context"
 	"fmt"
 	"gorm.io/gorm"
+	"log"
+	"os"
 )
 
 type _UserTableMgr struct {
@@ -13,7 +15,8 @@ type _UserTableMgr struct {
 // UserTableMgr open func
 func UserTableMgr(db *gorm.DB) *_UserTableMgr {
 	if db == nil {
-		panic(fmt.Errorf("UserTableMgr need init by db"))
+		log.Println(fmt.Errorf("UserTableMgr need init by db"))
+		os.Exit(1)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	return &_UserTableMgr{_BaseMgr: &_BaseMgr{DB: db.Table("user_table"), isRelated: globalIsRelated, ctx: ctx, cancel: cancel, timeout: -1}}

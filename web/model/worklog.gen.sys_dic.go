@@ -4,6 +4,8 @@ import (
 "context"
 	"fmt"
 	"gorm.io/gorm"
+	"log"
+	"os"
 )
 
 type _SysDicMgr struct {
@@ -13,7 +15,8 @@ type _SysDicMgr struct {
 // SysDicMgr open func
 func SysDicMgr(db *gorm.DB) *_SysDicMgr {
 	if db == nil {
-		panic(fmt.Errorf("SysDicMgr need init by db"))
+		log.Println(fmt.Errorf("SysDicMgr need init by db"))
+		os.Exit(1)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	return &_SysDicMgr{_BaseMgr: &_BaseMgr{DB: db.Table("sys_dic"), isRelated: globalIsRelated, ctx: ctx, cancel: cancel, timeout: -1}}
