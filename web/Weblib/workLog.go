@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"strconv"
 	"time"
 
 	"WorkReport/web/model"
 	"WorkReport/web/model/utils"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,6 +25,12 @@ type ErrToMsgStruct struct {
 	Code   int
 	Detail string
 	Status string
+}
+type WorkLog struct {
+	Date    int64  `json:"date"`
+	Type1   string `json:"type1"`
+	Type2   string `json:"type2"`
+	Content string `json:"content"`
 }
 
 var (
@@ -356,4 +364,53 @@ func gettype2Count(ctx *gin.Context) {
 	suRsp.Msg = "获取成功"
 	suRsp.Data = tmp
 	ctx.JSON(200, suRsp)
+}
+
+func downloadWorklog(ctx *gin.Context) {
+	dateStart := utils.Str2int64(ctx.Query("dateStart"))
+	dateEnd := utils.Str2int64(ctx.Query("dateEnd"))
+
+	type CountType2 struct {
+		Count int    `json:"count"`
+		Type2 string `json:"type2"`
+	}
+	workLogList := make([]WorkLog, 0)
+	h := model.WorkContentMgr(utils.GetDB())
+	err := h.Select(" work_content.date,type1.description as type1,type2.description as type2,work_content.content").Where("date >=? and date <= ? ", dateStart, dateEnd).Joins("left JOIN sys_dic type1 ON work_content.type1=type1.id LEFT JOIN sys_dic type2 ON work_content.type2 =type2.id").Scan(&workLogList).Error
+	if err != nil {
+		errrsp.Msg = ErrToMsg(err)
+		ctx.JSON(200, errrsp)
+		return
+	}
+	f := excelize.NewFile()
+	// Create a new sheet.
+	Sheet := f.NewSheet("Sheet1")
+	f.SetCellValue("Sheet1", "A1", "日期")
+	f.SetCellValue("Sheet1", "B1", "工作大类")
+	f.SetCellValue("Sheet1", "C1", "工作子类")
+	f.SetCellValue("Sheet1", "D1", "工作类容")
+
+	for i, v := range workLogList {
+		i += 2
+		timeTemplate := "2006-01-02"
+		// Set value of a cell.
+		f.SetCellValue("Sheet1", "A"+strconv.Itoa(i), time.Unix(v.Date, 0).Format(timeTemplate))
+		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i), v.Type1)
+		f.SetCellValue("Sheet1", "C"+strconv.Itoa(i), v.Type2)
+		f.SetCellValue("Sheet1", "D"+strconv.Itoa(i), v.Content)
+	}
+	// Set active sheet of the workbook.
+	f.SetActiveSheet(Sheet)
+	// Save spreadsheet by the given path.
+	//if err := f.SaveAs("Book1.xlsx"); err != nil {
+	//	fmt.Println(err)
+	//}
+
+	ctx.Header("Content-Type", "application/octet-stream")
+	ctx.Header("Content-Disposition", "attachment; filename="+"WorkLog.xlsx")
+	ctx.Header("Content-Transfer-Encoding", "binary")
+	//回写到web 流媒体 形成下载
+	_ = f.Write(ctx.Writer)
+	//suRsp.Msg = "获取成功"
+	//ctx.JSON(200, suRsp)
 }

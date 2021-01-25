@@ -48,7 +48,7 @@ func NewGinRouter() *gin.Engine {
 	//用户登入
 	ginRouter.Handle("POST", "/login", Login)
 
-	ginRouter.Use(JWTAuthMiddleware())
+	//ginRouter.Use(JWTAuthMiddleware())
 	workLog := ginRouter.Group("/w")
 	{
 		//添加workLog
@@ -84,6 +84,9 @@ func NewGinRouter() *gin.Engine {
 		workLog.Handle("GET", "/type1Count", gettype1Count)
 		//通过type2获得总数量
 		workLog.Handle("GET", "/type2Count", gettype2Count)
+		//下载指定时间范围的工作日志
+		workLog.Handle("GET", "/downloadWorklog", downloadWorklog)
+
 
 	}
 	ginRouter.Handle("GET", "/updateCheck", UpdateCheck)
