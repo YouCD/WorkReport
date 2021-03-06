@@ -1,4 +1,4 @@
-web/dist/
+web/dist/*
 !web/dist/dist.go
 WorkReport
 .idea
