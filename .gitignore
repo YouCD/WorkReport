@@ -1,7 +1,5 @@
-dist
-web/dist/*
-!dist.go
-main-packr.go
+web/dist/
+!web/dist/dist.go
 WorkReport
 .idea
 WorkReportFrontend
