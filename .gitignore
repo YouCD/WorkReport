@@ -1,5 +1,6 @@
 dist
-web/dist
+!web/dist/dist.go
+!web/Weblib/dist/dist.go
 packrd
 main-packr.go
 WorkReport

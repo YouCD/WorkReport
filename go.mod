@@ -1,23 +1,17 @@
 module WorkReport
 
-go 1.15
+go 1.16
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.3
-	github.com/gobuffalo/packr/v2 v2.8.1
-	github.com/karrick/godirwalk v1.16.1 // indirect
-	github.com/qianlnk/to v0.0.0-20191230085244-91e712717368 // indirect
-	github.com/rogpeppe/go-internal v1.7.0 // indirect
 	github.com/schollz/progressbar/v3 v3.7.3
-	github.com/sirupsen/logrus v1.7.0 // indirect
-	github.com/spf13/cobra v1.1.1
+	github.com/spf13/cobra v1.1.3
+	github.com/stretchr/testify v1.5.1 // indirect
 	github.com/tidwall/gjson v1.6.7
-	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
-	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
-	golang.org/x/sys v0.0.0-20210123111255-9b0068b26619 // indirect
-	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf // indirect
-	golang.org/x/tools v0.1.0 // indirect
+	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
+	golang.org/x/sys v0.0.0-20210305230114-8fe3ee5dd75b // indirect
+	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	gorm.io/driver/mysql v1.0.3
 	gorm.io/gorm v1.20.6
 )

@@ -14,24 +14,17 @@ FLAG			:="-X '${IMPORT_PATH}.BuildTime=${BUILD_TIME}' -X '${IMPORT_PATH}.CommitI
 BINARY_DIR=bin
 BINARY_NAME:=WorkReport
 
-DIST_DIR :=$(shell git clone https://github.com/YouCD/WorkReportFrontend.git&&cd WorkReportFrontend&&${NPMCMD} install &&${NPMCMD} run build&&cp -r dist ../web )
-GOPATH   :=$(shell go env GOPATH)
-PACKR2   :=$(GOPATH)/bin/packr2
+DIST_DIR :=$(shell git clone https://github.com/YouCD/WorkReportFrontend.git&&cd WorkReportFrontend&&${NPMCMD} install &&${NPMCMD} run build&&cp -r dist/* ../web/dist/ )
+
 # linux
 build-linux:
-	${GOCMD} get -u github.com/gobuffalo/packr/v2/packr2
-	$(GOCMD) generate
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)-linux
 
 #mac
 build-darwin:
-	${GOCMD} get -u github.com/gobuffalo/packr/v2/packr2
-	$(GOCMD) generate
 	CGO_ENABLED=0 GOOS=darwin $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)-darwin
 # windows
 build-win:
-	${GOCMD} get -u github.com/gobuffalo/packr/v2/packr2
-	$(GOCMD) generate
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)-win.exe
 
 # 全平台

@@ -1,47 +1,32 @@
 package Weblib
 
 import (
+	"WorkReport/web/dist"
+	"embed"
 	"github.com/gin-gonic/gin"
-	"github.com/gobuffalo/packr/v2"
 	"net/http"
-	"path"
 	"strings"
 )
 
-func exists(fs *packr.Box, prefix string, filepath string) bool {
-	if p := strings.TrimPrefix(filepath, prefix); len(p) < len(filepath) {
-		name := path.Join("/", p)
-		if fs.HasDir(name) {
-			index := path.Join(name, "index.html")
-			if !fs.Has(index) {
-				return false
-			}
-		} else if !fs.Has(name) {
-			return false
-		}
-		return true
-	}
-	return false
-}
+func StaticServe(urlPrefix string, fs embed.FS, ) gin.HandlerFunc {
+	fileServer := http.FileServer(http.FS(fs))
+	return func(ctx *gin.Context) {
+		//fullName := filepath.Join("/dist", filepath.FromSlash(path.Clean("/"+ctx.Request.URL.Path)))
+		//fmt.Println("fullName:",fullName)
+		if strings.Contains(ctx.Request.URL.Path, "/js") || strings.Contains(ctx.Request.URL.Path, "/css") || ctx.Request.URL.Path == "/" {
 
-func StaticServe(urlPrefix string, fs *packr.Box) gin.HandlerFunc {
-	fileserver := http.FileServer(fs)
-	if urlPrefix != "" {
-		fileserver = http.StripPrefix(urlPrefix, fileserver)
-	}
-	return func(c *gin.Context) {
-		if exists(fs, urlPrefix, c.Request.URL.Path) {
-			fileserver.ServeHTTP(c.Writer, c.Request)
-			c.Abort()
+			fileServer.ServeHTTP(ctx.Writer, ctx.Request)
+			ctx.Abort()
+			return
 		}
 	}
+
 }
 
 func NewGinRouter() *gin.Engine {
-	gin.SetMode(gin.ReleaseMode)
+
 	ginRouter := gin.Default()
-	box := packr.New("gemini", "../dist")
-	ginRouter.Use(StaticServe("/", box))
+	ginRouter.Use(StaticServe("/", dist.Dist))
 
 	ginRouter.Use(CorsMiddleware())
 
