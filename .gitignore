@@ -1,6 +1,6 @@
 dist
-web/dist
-!web/dist/dist.go
+/web/dist
+!/web/dist/dist.go
 
 main-packr.go
 WorkReport
