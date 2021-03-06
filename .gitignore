@@ -1,5 +1,7 @@
 dist
+web/dist
 !web/dist/dist.go
+
 main-packr.go
 WorkReport
 .idea
