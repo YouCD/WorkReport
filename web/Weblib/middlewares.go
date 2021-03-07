@@ -36,5 +36,6 @@ func CorsMiddleware() gin.HandlerFunc {
 		}
 		// 处理请求
 		c.Next()
+		return
 	}
 }

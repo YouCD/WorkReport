@@ -73,11 +73,13 @@ func GetRelease() (v ReleaseVersion) {
 	}
 	return v
 }
-
-func DownloadFileProgress(url, filename string) {
+var (
+	DownloadBar =new(progressbar.ProgressBar)
+)
+func DownloadFileProgress(url, filename string){
 	r, err := http.Get(url)
 	if err != nil {
-		log.Println(err)
+		log.Println("AAA",err)
 		os.Exit(1)
 	}
 	defer func() { _ = r.Body.Close() }()
@@ -89,14 +91,15 @@ func DownloadFileProgress(url, filename string) {
 		os.Exit(1)
 	}
 	defer func() { _ = f.Close() }()
-	bar := progressbar.DefaultBytes(
+
+	DownloadBar = progressbar.DefaultBytes(
 		r.ContentLength,
 		"下载中",
 	)
-	io.Copy(io.MultiWriter(f, bar), r.Body)
+	io.Copy(io.MultiWriter(f, DownloadBar), r.Body)
 }
 
-// Open calls the OS default program for uri
+// 运行时打开系统浏览器
 func OpenBrowser(uri string) error {
 	run, ok := commands[runtime.GOOS]
 	if !ok {

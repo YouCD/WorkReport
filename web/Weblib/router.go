@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func StaticServe(urlPrefix string, fs embed.FS, ) gin.HandlerFunc {
+func StaticServe( fs embed.FS, ) gin.HandlerFunc {
 	fileServer := http.FileServer(http.FS(fs))
 	return func(ctx *gin.Context) {
 		//fullName := filepath.Join("/dist", filepath.FromSlash(path.Clean("/"+ctx.Request.URL.Path)))
@@ -26,7 +26,7 @@ func StaticServe(urlPrefix string, fs embed.FS, ) gin.HandlerFunc {
 func NewGinRouter() *gin.Engine {
 
 	ginRouter := gin.Default()
-	ginRouter.Use(StaticServe("/", dist.Dist))
+	ginRouter.Use(StaticServe( dist.Dist))
 
 	ginRouter.Use(CorsMiddleware())
 
@@ -35,6 +35,7 @@ func NewGinRouter() *gin.Engine {
 
 	//ginRouter.Use(JWTAuthMiddleware())
 	workLog := ginRouter.Group("/w")
+	workLog.Use(JWTAuthMiddleware())
 	{
 		//添加workLog
 		workLog.Handle("POST", "/workLog", addWorkLog)

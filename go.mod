@@ -6,6 +6,7 @@ require (
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.3
+	github.com/gorilla/websocket v1.4.2
 	github.com/schollz/progressbar/v3 v3.7.3
 	github.com/spf13/cobra v1.1.3
 	github.com/tidwall/gjson v1.6.7
