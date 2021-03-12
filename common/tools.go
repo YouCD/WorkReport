@@ -77,11 +77,12 @@ var (
 	DownloadBar =new(progressbar.ProgressBar)
 )
 func DownloadFileProgress(url, filename string){
-	r, err := http.Get(url)
-	if err != nil {
-		log.Println("AAA",err)
-		os.Exit(1)
-	}
+	Download:
+		r, err := http.Get(url)
+		if err != nil {
+			log.Println(err)
+			goto Download
+		}
 	defer func() { _ = r.Body.Close() }()
 	f, err := os.Create(filename)
 	// 更改权限

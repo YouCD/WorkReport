@@ -7,15 +7,21 @@ import (
 
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		if ctx.Request.URL.Path=="/w/update"{
+			ctx.Next()
+			return
+		}
 		jwtStr := ctx.Request.Header.Get("jwt")
 
 		_, flag := ParseToken(jwtStr)
 		if flag {
 			ctx.Next()
+			return
 		} else {
 			errrsp.Msg = "无效的Token"
 			ctx.JSON(401, errrsp)
 			ctx.Abort()
+			return
 		}
 	}
 }

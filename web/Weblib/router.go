@@ -72,11 +72,12 @@ func NewGinRouter() *gin.Engine {
 		workLog.Handle("GET", "/type2Count", gettype2Count)
 		//下载指定时间范围的工作日志
 		workLog.Handle("GET", "/downloadWorklog", downloadWorklog)
-
+		//更新
+		workLog.Handle("GET", "/updateCheck", UpdateCheck)
+		workLog.Handle("GET", "/update", Update)
 
 	}
-	ginRouter.Handle("GET", "/updateCheck", UpdateCheck)
-	ginRouter.Handle("GET", "/update", Update)
+
 
 	return ginRouter
 }
