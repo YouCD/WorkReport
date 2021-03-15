@@ -15,7 +15,7 @@ BINARY_DIR=bin
 BINARY_NAME:=WorkReport
 
 DIST_DIR :=$(shell git clone https://github.com/YouCD/WorkReportFrontend.git&&cd WorkReportFrontend&&${NPMCMD} install &&${NPMCMD} run build&&cp -r dist/* ../web/dist/ )
-UPX_CMD  :=$(shell wget https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz&&tar xf upx-3.96-amd64_linux.tar.xz&&mv upx-3.96-amd64_linux/upx ../)
+UPX_CMD  :=$(shell wget https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz&&tar xf upx-3.96-amd64_linux.tar.xz&&mv upx-3.96-amd64_linux/upx ./)
 # linux
 build-linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)-linux
