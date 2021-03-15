@@ -24,12 +24,12 @@ build-linux:
 #mac
 build-darwin:
 	CGO_ENABLED=0 GOOS=darwin $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)-darwin
-	./upx $(BINARY_DIR)/$(BINARY_NAME)-linux
+	./upx $(BINARY_DIR)/$(BINARY_NAME)-darwin
 
 # windows
 build-win:
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)-win.exe
-	./upx $(BINARY_DIR)/$(BINARY_NAME)-linux
+	./upx $(BINARY_DIR)/$(BINARY_NAME)-win.exe
 # 全平台
 build-all:
 	make build-linux
