@@ -64,7 +64,7 @@ func Update(ctx *gin.Context) {
 
 	path, _ := os.Executable()
 
-	wg.Add(1)
+	wg.Add(2)
 
 	go func() {
 		if common.DownloadBar.State().CurrentPercent != 1 {
@@ -74,9 +74,7 @@ func Update(ctx *gin.Context) {
 		wg.Done()
 	}()
 
-	wg.Add(2)
 	go func() {
-
 		for {
 			time.Sleep(time.Second * 1)
 			if common.DownloadBar.State().CurrentPercent > 0 {
