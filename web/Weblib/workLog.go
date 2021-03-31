@@ -399,18 +399,11 @@ func downloadWorklog(ctx *gin.Context) {
 		f.SetCellValue("Sheet1", "C"+strconv.Itoa(i), v.Type2)
 		f.SetCellValue("Sheet1", "D"+strconv.Itoa(i), v.Content)
 	}
-	// Set active sheet of the workbook.
 	f.SetActiveSheet(Sheet)
-	// Save spreadsheet by the given path.
-	//if err := f.SaveAs("Book1.xlsx"); err != nil {
-	//	fmt.Println(err)
-	//}
 
 	ctx.Header("Content-Type", "application/octet-stream")
 	ctx.Header("Content-Disposition", "attachment; filename="+"WorkLog.xlsx")
 	ctx.Header("Content-Transfer-Encoding", "binary")
 	//回写到web 流媒体 形成下载
 	_ = f.Write(ctx.Writer)
-	//suRsp.Msg = "获取成功"
-	//ctx.JSON(200, suRsp)
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type MyAuth struct {
-	Username   string `json:"username"`
+	Username string `json:"username"`
 	//Roles string `json:"roles"`
 	jwt.StandardClaims
 }
@@ -23,7 +23,7 @@ func GenerateToken(username string) (string, error) {
 		//roles,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(), // 过期时间
-			Issuer:    "WorkLog System",                            // 签发人
+			Issuer:    "WorkLog System",                           // 签发人
 		},
 	}
 	// 使用指定的签名方法创建签名对象
