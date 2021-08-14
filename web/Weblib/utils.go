@@ -3,14 +3,15 @@ package Weblib
 import (
 	"WorkReport/common"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -18,7 +19,9 @@ var (
 )
 
 func init() {
-	versionInfo = common.GetRelease()
+	go func() {
+		versionInfo = common.GetRelease()
+	}()
 }
 
 func PasswordHash(password string) (string, error) {
@@ -32,15 +35,21 @@ func PasswordVerify(password, hash string) bool {
 }
 
 func UpdateCheck(ctx *gin.Context) {
+	if versionInfo.TagName == "" {
+		suRsp.Data = versionInfo
+		suRsp.Msg = fmt.Sprint("版本正在检测中...")
+		ctx.JSON(200, suRsp)
+		return
+	}
 	if common.Version != versionInfo.TagName {
 		suRsp.Data = versionInfo
 		suRsp.Msg = fmt.Sprintf("有新版本可以更新!  当前版本%s,最新版本%s 点击更新", common.Version, versionInfo.TagName)
 		ctx.JSON(200, suRsp)
-	} else {
-		errrsp.Msg = fmt.Sprintf("已是最新版本%s", common.Version)
-		ctx.JSON(200, errrsp)
+		return
 	}
-
+	errrsp.Msg = fmt.Sprintf("已是最新版本%s", common.Version)
+	ctx.JSON(200, errrsp)
+	return
 }
 
 var upgrade = websocket.Upgrader{
