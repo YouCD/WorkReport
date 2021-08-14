@@ -18,11 +18,11 @@ var (
 	versionInfo = common.ReleaseVersion{}
 )
 
-func init() {
-	go func() {
-		versionInfo = common.GetRelease()
-	}()
-}
+//func init() {
+//	go func() {
+//		versionInfo = common.GetRelease()
+//	}()
+//}
 
 func PasswordHash(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -35,6 +35,9 @@ func PasswordVerify(password, hash string) bool {
 }
 
 func UpdateCheck(ctx *gin.Context) {
+	go func() {
+		versionInfo = common.GetRelease()
+	}()
 	if versionInfo.TagName == "" {
 		suRsp.Data = versionInfo
 		suRsp.Msg = fmt.Sprint("版本正在检测中...")
