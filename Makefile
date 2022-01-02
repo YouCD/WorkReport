@@ -17,6 +17,9 @@ BINARY_NAME:=WorkReport
 # linux
 build-linux:
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)-linux
+# linux
+build:
+	@CGO_ENABLED=0 $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)
 
 #mac
 build-darwin:
