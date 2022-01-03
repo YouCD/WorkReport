@@ -1,12 +1,8 @@
 #!/bin/bash
 
-#git clone https://github.com/YouCD/WorkReportFrontend.git
-#cd WorkReportFrontend
-#npm install
-#npm run build
-#cp -r dist/* ../web/dist/
-#cd ..
-wget https://github.com/YouCD/WorkReportFrontend/releases/download/v0.1/dist.txz -O web/dist.txz
+
+download_url=`curl  -s  https://api.github.com/repos/youcd/WorkReportFrontend/releases/latest|grep browser_download_url|awk -F"\"" '{print $4}'`
+wget $download_url -O web/dist.txz
 cd web
 tar Jxf dist.txz
 cd ..
