@@ -1,6 +1,9 @@
 name: WorkReport pipeline
 
-on: [push]
+on:
+  push:
+    tags:
+    - 'v*'
 
 jobs:
   build:
@@ -20,5 +23,10 @@ jobs:
       - name: Upload binary file
         uses: actions/upload-artifact@v3
         with:
-          name: Go-results-${{ matrix.go-version }}
+          name: WorkReport
           path: bin/*
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3 # 使用第三方 Action 把构建完成的 Artifact 部署到指定分支
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
