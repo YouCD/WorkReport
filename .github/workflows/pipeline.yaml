@@ -17,3 +17,8 @@ jobs:
 
       - name: Build
         run: make build-all
+      - name: Upload binary file
+        uses: actions/upload-artifact@v3
+        with:
+          name: Go-results-${{ matrix.go-version }}
+          path: bin/*
