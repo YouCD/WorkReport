@@ -25,8 +25,12 @@ jobs:
         with:
           name: WorkReport
           path: bin/*
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3 # 使用第三方 Action 把构建完成的 Artifact 部署到指定分支
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with: # 将下述可执行文件 release 上去
+          files: |
+            bin/WorkReport-darwin
+            bin/WorkReport-linux
+            bin/WorkReport-win.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
