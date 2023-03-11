@@ -29,8 +29,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with: # 将下述可执行文件 release 上去
           files: |
-            bin/WorkReport-darwin
-            bin/WorkReport-linux
-            bin/WorkReport-win.exe
+            bin/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
