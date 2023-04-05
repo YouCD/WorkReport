@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
+	"io"
 )
 
 type User struct {
@@ -19,44 +19,37 @@ type JwtRespData struct {
 }
 
 func Login(ctx *gin.Context) {
-	data, err := ioutil.ReadAll(ctx.Request.Body)
+	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		errrsp.Msg = ErrToMsg(err)
-		ctx.JSON(500, errrsp)
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
 	}
-	ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(data))
 	user := User{}
 	err = json.Unmarshal(data, &user)
 	if err != nil {
-		errrsp.Msg = ErrToMsg(err)
-		ctx.JSON(500, errrsp)
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
 		return
 	}
 
 	h := model.UserTableMgr(utils.GetDB())
 	u, err := h.GetFromUserName(user.Username)
 	if err != nil {
-		errrsp.Msg = ErrToMsg(err)
-		ctx.JSON(500, errrsp)
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
 		return
 	}
 
 	if PasswordVerify(user.Password, u.Password) {
 		jwtToken, err := GenerateToken(u.UserName)
 		if err != nil {
-			errrsp.Msg = ErrToMsg(err)
-			ctx.JSON(500, errrsp)
+			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
 			return
 		}
 		var rsp JwtRespData
 		rsp.Token = jwtToken
 		rsp.Uid = u.UserName
-		suRsp.Data = rsp
-		suRsp.Msg = "登入成功"
-		ctx.JSONP(200, suRsp)
+		ctx.JSONP(200, NewSuccessResponse("登入成功", rsp))
 	} else {
-		errrsp.Msg = "登入出错"
-		ctx.JSON(500, errrsp)
+		ctx.JSONP(200, NewEmptyDataErrorResponse("登入出错"))
 		return
 	}
 }

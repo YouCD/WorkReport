@@ -7,7 +7,7 @@ import (
 
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if ctx.Request.URL.Path=="/w/update"{
+		if ctx.Request.URL.Path == "/w/update" {
 			ctx.Next()
 			return
 		}
@@ -18,15 +18,15 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			ctx.Next()
 			return
 		} else {
-			errrsp.Msg = "无效的Token"
-			ctx.JSON(401, errrsp)
+
+			ctx.JSON(401, NewEmptyDataErrorResponse("无效的Token"))
 			ctx.Abort()
 			return
 		}
 	}
 }
 
-//处理跨域
+// 处理跨域
 func CorsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method

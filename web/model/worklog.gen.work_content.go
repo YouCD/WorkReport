@@ -1,7 +1,7 @@
 package model
 
 import (
-"context"
+	"context"
 	"fmt"
 	"gorm.io/gorm"
 	"os"
@@ -11,33 +11,29 @@ type _WorkContentMgr struct {
 	*_BaseMgr
 }
 
-
-
 const (
-	BaseSQL1="left join sys_dic sd on sd.id = work_content.type1 left join sys_dic on sys_dic.id = work_content.type2"
-	BaseSQL2="work_content.id,work_content.date,work_content.content,sd.description as type1,sd.id as Type1ID,sys_dic.description as type2,sys_dic.id as Type2ID"
-
+	BaseSQL1 = "left join sys_dic sd on sd.id = work_content.type1 left join sys_dic on sys_dic.id = work_content.type2"
+	BaseSQL2 = "work_content.id,work_content.date,work_content.content,sd.description as type1,sd.id as Type1ID,sys_dic.description as type2,sys_dic.id as Type2ID"
 )
-
 
 func (obj *_WorkContentMgr) Pager(pageIndex, pageSize int) (result []*WorkContentResp, count int64) {
 	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1)
 
 	resp.Count(&count) //总行数
-	resp.Select(BaseSQL2).Offset((pageIndex - 1) * pageSize).Limit(pageSize).Order("work_content.date desc").Scan(&result)
+	resp.Select(BaseSQL2).Offset((pageIndex - 1) * pageSize).Limit(pageSize).Order("work_content.date desc").Order("work_content.id desc").Scan(&result)
 	return
 }
 
-func (obj *_WorkContentMgr) PagerFromType(typeID,pageIndex, pageSize int) (result []*WorkContentResp, count int64) {
-	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("type1 = ? or type2 =?",typeID,typeID)
+func (obj *_WorkContentMgr) PagerFromType(typeID, pageIndex, pageSize int) (result []*WorkContentResp, count int64) {
+	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("type1 = ? or type2 =?", typeID, typeID)
 
 	resp.Count(&count) //总行数
 	resp.Select(BaseSQL2).Offset((pageIndex - 1) * pageSize).Limit(pageSize).Scan(&result)
 	return
 }
 
-func (obj *_WorkContentMgr) PagerFromWeek(weekStartDate,weekEndDate int64) (result []*WorkContentResp, count int64) {
-	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("date >=? and date <=?",weekStartDate,weekEndDate)
+func (obj *_WorkContentMgr) PagerFromWeek(weekStartDate, weekEndDate int64) (result []*WorkContentResp, count int64) {
+	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("date >=? and date <=?", weekStartDate, weekEndDate)
 
 	resp.Count(&count) //总行数
 	resp.Select(BaseSQL2).Scan(&result)
@@ -45,7 +41,7 @@ func (obj *_WorkContentMgr) PagerFromWeek(weekStartDate,weekEndDate int64) (resu
 }
 
 func (obj *_WorkContentMgr) PagerFromContent(content string) (result []*WorkContentResp, count int64) {
-	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("content like ?","%"+content+"%")
+	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("content like ?", "%"+content+"%")
 
 	resp.Count(&count) //总行数
 	resp.Select(BaseSQL2).Scan(&result)
@@ -53,7 +49,7 @@ func (obj *_WorkContentMgr) PagerFromContent(content string) (result []*WorkCont
 }
 
 func (obj *_WorkContentMgr) PagerFromDate(Date int64) (result []*WorkContentResp, count int64) {
-	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("date = ?",Date)
+	resp := obj.DB.Table(obj.GetTableName()).Joins(BaseSQL1).Where("date = ?", Date)
 	resp.Count(&count) //总行数
 	resp.Select(BaseSQL2).Scan(&result)
 	return

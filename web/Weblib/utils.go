@@ -39,19 +39,15 @@ func UpdateCheck(ctx *gin.Context) {
 		versionInfo = common.GetRelease()
 	}()
 	if versionInfo.TagName == "" {
-		suRsp.Data = versionInfo
-		suRsp.Msg = fmt.Sprint("版本正在检测中...")
-		ctx.JSON(200, suRsp)
+		ctx.JSON(200, NewSuccessResponse("版本正在检测中...", versionInfo))
 		return
 	}
 	if common.Version != versionInfo.TagName {
-		suRsp.Data = versionInfo
-		suRsp.Msg = fmt.Sprintf("有新版本可以更新!  当前版本%s,最新版本%s 点击更新", common.Version, versionInfo.TagName)
-		ctx.JSON(200, suRsp)
+		ctx.JSON(200, NewSuccessResponse(fmt.Sprintf("有新版本可以更新!  当前版本%s,最新版本%s 点击更新", common.Version, versionInfo.TagName), versionInfo))
 		return
 	}
-	errrsp.Msg = fmt.Sprintf("已是最新版本%s", common.Version)
-	ctx.JSON(200, errrsp)
+
+	ctx.JSON(200, NewEmptyDataErrorResponse(fmt.Sprintf("已是最新版本%s", common.Version)))
 	return
 }
 
