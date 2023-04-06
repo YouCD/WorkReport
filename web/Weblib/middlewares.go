@@ -7,7 +7,7 @@ import (
 
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if ctx.Request.URL.Path == "/w/update" {
+		if ctx.Request.URL.Path == "/api/w/update" {
 			ctx.Next()
 			return
 		}
