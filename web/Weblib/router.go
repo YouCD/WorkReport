@@ -8,13 +8,12 @@ import (
 	"strings"
 )
 
-func StaticServe(fs embed.FS, ) gin.HandlerFunc {
+func StaticServe(fs embed.FS) gin.HandlerFunc {
 	fileServer := http.FileServer(http.FS(fs))
 	return func(ctx *gin.Context) {
 		//fullName := filepath.Join("/dist", filepath.FromSlash(path.Clean("/"+ctx.Request.URL.Path)))
 		//fmt.Println("fullName:",fullName)
-		if strings.Contains(ctx.Request.URL.Path, "/js") || strings.Contains(ctx.Request.URL.Path, "/css") || ctx.Request.URL.Path == "/" {
-
+		if strings.Contains(ctx.Request.URL.Path, "/assets") || ctx.Request.URL.Path == "/" {
 			fileServer.ServeHTTP(ctx.Writer, ctx.Request)
 			ctx.Abort()
 			return
@@ -31,10 +30,10 @@ func NewGinRouter() *gin.Engine {
 	ginRouter.Use(CorsMiddleware())
 
 	//用户登入
-	ginRouter.Handle("POST", "/login", Login)
+	ginRouter.Handle("POST", "/api/login", Login)
 
 	//ginRouter.Use(JWTAuthMiddleware())
-	workLog := ginRouter.Group("/w")
+	workLog := ginRouter.Group("/api/w")
 	workLog.Use(JWTAuthMiddleware())
 	{
 		//添加workLog

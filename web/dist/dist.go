@@ -2,5 +2,5 @@ package dist
 
 import "embed"
 
-//go:embed  * css/* js/*
+//go:embed  * assets/*
 var Dist embed.FS
