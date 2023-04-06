@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-download_url=`curl  -s  https://api.github.com/repos/youcd/WorkReportFrontend/releases/latest|grep browser_download_url|awk -F"\"" '{print $4}'`
+download_url=`curl  -s https://api.github.com/repos/youcd/WorkReportFrontend_vue3/releases/latest|grep browser_download_url|awk -F"\"" '{print $4}'`
 wget $download_url -O web/dist.txz
 cd web
 tar Jxf dist.txz
