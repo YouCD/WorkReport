@@ -73,25 +73,34 @@ func GetRelease() (v ReleaseVersion) {
 	}
 	return v
 }
+
 var (
-	DownloadBar =new(progressbar.ProgressBar)
+	DownloadBar = new(progressbar.ProgressBar)
 )
-func DownloadFileProgress(url, filename string){
-	Download:
-		r, err := http.Get(url)
-		if err != nil {
-			log.Println(err)
-			goto Download
-		}
+
+func DownloadFileProgress(url, filename string) {
+Download:
+	r, err := http.Get(url)
+	if err != nil {
+		log.Println(err)
+		goto Download
+	}
 	defer func() { _ = r.Body.Close() }()
 	f, err := os.Create(filename)
 	// 更改权限
 	err = f.Chmod(0775)
 	if err != nil {
 		log.Println(err)
+		err = os.Rename(filename, strings.Split(filename, ".tmp")[0])
+		log.Println(err)
 		os.Exit(1)
 	}
-	defer func() { _ = f.Close() }()
+	defer func() {
+		_ = f.Close()
+		log.Println("更新退出程序.....")
+
+		os.Exit(0)
+	}()
 
 	DownloadBar = progressbar.DefaultBytes(
 		r.ContentLength,
