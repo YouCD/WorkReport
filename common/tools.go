@@ -93,13 +93,10 @@ Download:
 		log.Println(err)
 		err = os.Rename(filename, strings.Split(filename, ".tmp")[0])
 		log.Println(err)
-		os.Exit(1)
 	}
 	defer func() {
 		_ = f.Close()
 		log.Println("更新退出程序.....")
-
-		os.Exit(0)
 	}()
 
 	DownloadBar = progressbar.DefaultBytes(

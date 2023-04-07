@@ -18,11 +18,7 @@ var (
 	versionInfo = common.ReleaseVersion{}
 )
 
-//func init() {
-//	go func() {
-//		versionInfo = common.GetRelease()
-//	}()
-//}
+var IsUpdated bool
 
 func PasswordHash(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -35,6 +31,10 @@ func PasswordVerify(password, hash string) bool {
 }
 
 func UpdateCheck(ctx *gin.Context) {
+	if IsUpdated {
+		ctx.JSON(200, NewSuccessResponse("更新完成，请重启软件！", versionInfo))
+		return
+	}
 	go func() {
 		versionInfo = common.GetRelease()
 	}()
@@ -43,11 +43,18 @@ func UpdateCheck(ctx *gin.Context) {
 		return
 	}
 	if common.Version != versionInfo.TagName {
-		ctx.JSON(200, NewSuccessResponse(fmt.Sprintf("有新版本可以更新!  当前版本%s,最新版本%s 点击更新", common.Version, versionInfo.TagName), versionInfo))
+		var msg string
+		if common.Version != "" {
+			msg = fmt.Sprintf("有新版本可以更新!  当前版本%s,最新版本%s 点击更新", common.Version, versionInfo.TagName)
+		} else {
+			msg = fmt.Sprintf("有新版本可以更新!  最新版本%s 点击更新", versionInfo.TagName)
+		}
+
+		ctx.JSON(200, NewSuccessResponse(msg, versionInfo))
 		return
 	}
 
-	ctx.JSON(200, NewEmptyDataErrorResponse(fmt.Sprintf("已是最新版本%s", common.Version)))
+	ctx.JSON(200, NewEmptyDataSuccessResponse(fmt.Sprintf("已是最新版本%s", common.Version)))
 	return
 }
 
@@ -79,6 +86,7 @@ func Update(ctx *gin.Context) {
 			common.DownloadFileProgress(versionInfo.DownloadUrl, path+".tmp")
 		}
 		err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！"))
+		IsUpdated = true
 		wg.Done()
 	}()
 
