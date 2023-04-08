@@ -22,8 +22,8 @@ var resetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if DBUser != "" && DBPwd != "" && DBHost != "" && DBPort != "" && DBName != "" {
 			utils.InitDB(DBUser, DBPwd, DBHost, DBPort, DBName)
-			err:=utils.CreateOrUpdateUser(username, password)
-			if err!=nil{
+			err := utils.CreateOrUpdateUser(username, password)
+			if err != nil {
 				log.Println(err)
 			}
 		}

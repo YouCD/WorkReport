@@ -78,7 +78,6 @@ func addWorkLog(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
 		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
-
 		return
 	}
 	var workContent model.WorkContent
@@ -112,13 +111,11 @@ func getWorkLog(ctx *gin.Context) {
 
 func delWorkLog(ctx *gin.Context) {
 	id := utils.StrToInt(ctx.Query("id"))
-
 	h := model.WorkContentMgr(utils.GetDB())
 	var tmp model.WorkContent
 	tmp.ID = id
 	err := h.Delete(&tmp).Error
 	if err != nil {
-
 		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
 		return
 	}

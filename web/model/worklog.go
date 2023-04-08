@@ -7,9 +7,11 @@ type SysDic struct {
 	Pid         int    `gorm:"column:pid;type:int(11)" json:"pid"`                               // 上级id
 	Type        int    `gorm:"column:type;type:int(11);not null" json:"type"`                    // 类型
 }
+
 func (SysDic) TableName() string {
 	return "sys_dic"
 }
+
 // UserTable 用户表
 type UserTable struct {
 	ID         int    `gorm:"primaryKey;column:id;type:int(11) AUTO_INCREMENT;not null" json:"-"`
@@ -17,9 +19,11 @@ type UserTable struct {
 	Password   string `gorm:"column:password;type:varchar(512);not null" json:"password"` // 密码
 	CreateTime int64  `gorm:"column:create_time;type:bigint(20);not null" json:"create_time"`
 }
+
 func (UserTable) TableName() string {
 	return "user_table"
 }
+
 // WorkContent 工作内容
 type WorkContent struct {
 	ID      int    `gorm:"primaryKey;column:id;type:int(11) AUTO_INCREMENT;not null" json:"id"`
@@ -28,9 +32,11 @@ type WorkContent struct {
 	Type2   int    `gorm:"column:type2;type:int(11);not null" json:"type2"`  // 工作子类
 	Content string `gorm:"column:content;type:text;not null" json:"content"` // 工作内容
 }
+
 func (WorkContent) TableName() string {
 	return "work_content"
 }
+
 // WorkContentResp 获取工作内容
 type WorkContentResp struct {
 	ID      int    `json:"id"`

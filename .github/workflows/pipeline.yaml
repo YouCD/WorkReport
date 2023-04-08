@@ -3,7 +3,7 @@ name: WorkReport pipeline
 on:
   push:
     tags:
-    - 'v*'
+      - 'v*'
 
 jobs:
   build:

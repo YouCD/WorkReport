@@ -18,7 +18,6 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			ctx.Next()
 			return
 		} else {
-
 			ctx.JSON(401, NewEmptyDataErrorResponse("无效的Token"))
 			ctx.Abort()
 			return

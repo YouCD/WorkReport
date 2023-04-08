@@ -22,6 +22,7 @@ func Login(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
 		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		return
 	}
 	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(data))
 	user := User{}

@@ -24,7 +24,6 @@ func StrToInt(i string) int {
 	return pageindex
 }
 
-
 func Int32ToStr(i int32) string {
 	return strconv.FormatInt(int64(i), 10)
 }

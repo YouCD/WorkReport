@@ -70,10 +70,10 @@ func Update(ctx *gin.Context) {
 	client, err := upgrade.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
-	err = client.WriteMessage(websocket.TextMessage, []byte("开始更新,请稍候..."))
-	if err != nil {
+	if err = client.WriteMessage(websocket.TextMessage, []byte("开始更新,请稍候...")); err != nil {
 		log.Println(err)
 	}
 
@@ -85,7 +85,9 @@ func Update(ctx *gin.Context) {
 		if common.DownloadBar.State().CurrentPercent != 1 {
 			common.DownloadFileProgress(versionInfo.DownloadUrl, path+".tmp")
 		}
-		err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！"))
+		if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！")); err != nil {
+			log.Println(err)
+		}
 		IsUpdated = true
 		wg.Done()
 	}()
@@ -94,14 +96,12 @@ func Update(ctx *gin.Context) {
 		for {
 			time.Sleep(time.Second * 1)
 			if common.DownloadBar.State().CurrentPercent > 0 {
-				err = client.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("更新中...已完成%.2f%%", common.DownloadBar.State().CurrentPercent*100)))
-				if err != nil {
+				if err = client.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("更新中...已完成%.2f%%", common.DownloadBar.State().CurrentPercent*100))); err != nil {
 					log.Println(err)
 				}
 			}
 			if common.DownloadBar.State().CurrentPercent == 1 {
-				err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！"))
-				if err != nil {
+				if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！")); err != nil {
 					log.Println(err)
 				}
 				os.Rename(path+".tmp", path)

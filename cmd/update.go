@@ -12,15 +12,11 @@ import (
 var (
 	path  string
 	Force bool
-
 )
-
-
 
 func init() {
 	updateCmd.Flags().BoolVarP(&Force, "force", "f", false, "force updating.")
 }
-
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
@@ -52,4 +48,3 @@ type Reader struct {
 	Total   int64
 	Current int64
 }
-

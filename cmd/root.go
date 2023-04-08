@@ -10,13 +10,11 @@ import (
 	"os"
 )
 
-//var cfgFile string
+// var cfgFile string
 var (
-	Name ="WorkReport"
+	Name = "WorkReport"
 
 	Port string
-
-
 )
 
 const Logo = `                                                                      
@@ -28,11 +26,12 @@ m     m               #      mmmmm                                m
                                            #                          
                                            "                          
 `
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   Name,
-	Short: fmt.Sprintf("%s 是用于记录工作日志的系统",Name),
-	Long:  fmt.Sprintf("%s 是用于记录工作日志的系统",Name),
+	Short: fmt.Sprintf("%s 是用于记录工作日志的系统", Name),
+	Long:  fmt.Sprintf("%s 是用于记录工作日志的系统", Name),
 
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
@@ -66,5 +65,3 @@ var versionCmd = &cobra.Command{
 		fmt.Printf("BuildUser: %s\n", common.BuildUser)
 	},
 }
-
-

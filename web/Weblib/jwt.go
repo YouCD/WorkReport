@@ -7,7 +7,6 @@ import (
 
 type MyAuth struct {
 	Username string `json:"username"`
-	//Roles string `json:"roles"`
 	jwt.StandardClaims
 }
 
