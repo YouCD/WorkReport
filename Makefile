@@ -34,3 +34,6 @@ build-all:
 	make build-darwin
 	make build-win
 	./upx $(BINARY_DIR)/$(BINARY_NAME)-*
+clean:
+	rm -rf bin
+	rm -rf web/dist/assets  web/dist/index.html
