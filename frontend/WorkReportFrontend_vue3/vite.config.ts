@@ -52,7 +52,7 @@ export default async ({command, mode}: ConfigEnv): Promise<UserConfig> => {
         resolve: {
             // 别名配置
             alias: {
-                "@": path.resolve(__dirname, "src")
+                "@": path.resolve(__dirname, "./src")
             }
         },
         base: isBuild ? 'https://cdn.youcd.online' : "",
