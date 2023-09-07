@@ -27,7 +27,11 @@ jobs:
             "publicCdnPath": "${{ secrets.PUBLICCDNPATH }}"
           }
           EOF
-          make build
+          npm -g install npm@9.8.1
+          npm install
+          npm run build
+          npm audit fix
+          rm -rf  dist/log
           cp -r dist ../../backend/web/
 
       - name: Set up Go
