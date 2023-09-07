@@ -11,6 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 'v16.20.2'
+      - name: npm run build
+        run: |
+          node -v
+          npm -v
+          cd frontend/WorkReportFrontend_vue3
+          cat >qiniuKey.json<<EOF
+          {
+            "accessKey": "${{ secrets.SECRETKEY }}",
+            "secretKey": "${{ secrets.ACCESSKEY }}",
+            "bucket": "${{ secrets.BUCKET }}",
+            "publicCdnPath": "${{ secrets.PUBLICCDNPATH }}"
+          }
+          EOF
+          make build
+          cp -r dist ../../backend/web/
+
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
