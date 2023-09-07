@@ -1,1 +1,0 @@
-import{h as a,U as n,d as r,r as i}from"./index-3ce84ad1.js";const p=async()=>await a.Get(n.workType1),d=r("type1",()=>{const t=i([]);return{type1Data:t,getType1List:async()=>{const e=await p();t.value=e.data.type_list},FindType1ByDescription:e=>t.value.find(s=>s.description===e)}});export{d as t};
