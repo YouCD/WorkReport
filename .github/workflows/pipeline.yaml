@@ -2,9 +2,8 @@ name: WorkReport pipeline
 
 on:
   push:
-    tags:
-      - 'v*'
-
+    branches:
+      - master
 jobs:
   build:
 
