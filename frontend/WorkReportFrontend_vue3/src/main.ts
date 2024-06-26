@@ -1,21 +1,19 @@
 import {createApp} from 'vue'
-import { MotionPlugin } from '@vueuse/motion'
+import {MotionPlugin} from '@vueuse/motion'
 
 
 import router from './router'
 
 //  antd
 import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css';
+import 'ant-design-vue/dist/reset.css';
 import {createPinia} from 'pinia'
-
 //  日期组件 汉化
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
-dayjs.locale('zh-cn');
-
-
 import App from './App.vue'
+
+dayjs.locale('zh-cn');
 
 
 const app = createApp(App);

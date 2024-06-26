@@ -57,7 +57,7 @@ const treeDataTemp = ref<DataNode>({
 });
 
 //  最上层ID
-const TreeTopKey=999999
+const TreeTopKey = 999999
 
 const expandedKeys = ref<number[]>([TreeTopKey])
 const treeData = computed(() => {
@@ -74,7 +74,7 @@ onMounted(async () => {
   await getType1List()
   data.type2Data.pid = type1Data.value[0].id
 
-    TreeDataHandler()
+  TreeDataHandler()
 })
 
 
@@ -85,8 +85,8 @@ const TreeDataHandler = async () => {
     data.type2Data.pid = pid;
 
     //  重置 原有的数据
-    treeDataTemp.value.children=[]
-    expandedKeys.value=[TreeTopKey]
+    treeDataTemp.value.children = []
+    expandedKeys.value = [TreeTopKey]
     const type2ListPromises = type1List.map(async (type1) => {
       const treData1: DataNode = {
         title: type1.description,

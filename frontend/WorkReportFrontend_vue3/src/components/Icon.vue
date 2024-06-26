@@ -1,12 +1,12 @@
 <template>
-  <component :is="icon" :style="$attrs as StyleValue " />
+  <component :is="icon" :style="$attrs as StyleValue "/>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable vue/no-setup-props-destructure */
-import { StyleValue } from 'vue'
+import {StyleValue} from 'vue'
 
-const { icon } = defineProps<{
+const {icon} = defineProps<{
   icon: any
 }>()
 </script>

@@ -1,14 +1,17 @@
 <template>
   <div>
     <div class="Box1">
-      <div id="Type1Count" style="width: 100%; background: white;height:360px;padding: 20px" v-motion :initial="{  opacity: 0,  x: -50,}" :enter="{  opacity: 1,  x: 0,}" ></div>
+      <div id="Type1Count" style="width: 100%; background: white;height:360px;padding: 20px" v-motion
+           :initial="{  opacity: 0,  x: -50,}" :enter="{  opacity: 1,  x: 0,}"></div>
     </div>
     <div class="Box2">
-      <div id="Type1CountPie" style="width: 100%; background: white;height:360px;padding: 20px;" v-motion :initial="{  opacity: 0,  x: 50,}" :enter="{  opacity: 1,  x: 0,}"></div>
+      <div id="Type1CountPie" style="width: 100%; background: white;height:360px;padding: 20px;" v-motion
+           :initial="{  opacity: 0,  x: 50,}" :enter="{  opacity: 1,  x: 0,}"></div>
     </div>
   </div>
   <div style="height: 360px;background: white;width: 100%;margin-top: 10px;overflow: hidden">
-    <div id="Type2Count" style="width: 100%; background: white;height:360px;padding: 20px;" v-motion :initial="{  opacity: 0,  y: 1000,}" :enter="{  opacity: 1,  y: 0,}"></div>
+    <div id="Type2Count" style="width: 100%; background: white;height:360px;padding: 20px;" v-motion
+         :initial="{  opacity: 0,  y: 1000,}" :enter="{  opacity: 1,  y: 0,}"></div>
   </div>
 </template>
 
@@ -55,7 +58,7 @@ const type1ChartHandler = () => {
   plot.render();
   plot.on('element:mouseenter', (data: any) => {
     const type1 = FindType1ByDescription(data.data.data.type1) as IType
-    if (type1){
+    if (type1) {
       getType2CountList({id: type1.id})
     }
   });
