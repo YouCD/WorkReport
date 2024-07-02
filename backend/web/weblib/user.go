@@ -1,11 +1,11 @@
-package Weblib
+package weblib
 
 import (
 	"WorkReport/web/model"
-	"WorkReport/web/model/utils"
 	"bytes"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/youcd/toolkit/db"
 	"io"
 )
 
@@ -13,6 +13,8 @@ type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+//nolint:revive
 type JwtRespData struct {
 	Token string `json:"token"`
 	Uid   string `json:"uid"`
@@ -32,7 +34,7 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	h := model.UserTableMgr(utils.GetDB())
+	h := model.UserTableMgr(db.GetDB())
 	u, err := h.GetFromUserName(user.Username)
 	if err != nil {
 		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))

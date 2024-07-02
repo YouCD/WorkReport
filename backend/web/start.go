@@ -1,15 +1,20 @@
 package web
 
 import (
-	"WorkReport/web/Weblib"
+	"WorkReport/web/weblib"
 	"fmt"
 )
 
 func StartServer(port string) {
 	fmt.Printf("\nweb server listen on %s\n", port)
-	router := Weblib.NewGinRouter()
+	router := weblib.NewGinRouter()
 	if port != "" {
-		router.Run(":" + port)
+		if err := router.Run(":" + port); err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
-	router.Run()
+	if err := router.Run(); err != nil {
+		fmt.Println(err)
+	}
 }

@@ -1,4 +1,4 @@
-package Weblib
+package weblib
 
 import (
 	"WorkReport/common"
@@ -55,12 +55,11 @@ func UpdateCheck(ctx *gin.Context) {
 	}
 
 	ctx.JSON(200, NewEmptyDataSuccessResponse(fmt.Sprintf("已是最新版本%s", common.Version)))
-	return
 }
 
 var upgrade = websocket.Upgrader{
 	// 允许所有CORS跨域访问
-	CheckOrigin: func(r *http.Request) bool {
+	CheckOrigin: func(_ *http.Request) bool {
 		return true
 	},
 }
@@ -104,7 +103,9 @@ func Update(ctx *gin.Context) {
 				if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！")); err != nil {
 					log.Println(err)
 				}
-				os.Rename(path+".tmp", path)
+				if err := os.Rename(path+".tmp", path); err != nil {
+					log.Println(err)
+				}
 				wg.Done()
 				break
 			}

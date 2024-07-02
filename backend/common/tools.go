@@ -24,6 +24,7 @@ var commands = map[string]string{
 	"linux":   "xdg-open",
 }
 
+//nolint:tagliatelle
 type ReleaseVersion struct {
 	TagName     string `json:"tag_name"`
 	SwName      string `json:"sw_name"`
@@ -71,10 +72,11 @@ func GetRelease() (v ReleaseVersion) {
 			}
 		}
 	}
-	return v
+	return
 }
 
 var (
+	//nolint:typecheck
 	DownloadBar = new(progressbar.ProgressBar)
 )
 
@@ -87,6 +89,10 @@ Download:
 	}
 	defer func() { _ = r.Body.Close() }()
 	f, err := os.Create(filename)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	// 更改权限
 	err = f.Chmod(0775)
 	if err != nil {
@@ -98,12 +104,12 @@ Download:
 		_ = f.Close()
 		log.Println("更新退出程序.....")
 	}()
-
+	//nolint:typecheck
 	DownloadBar = progressbar.DefaultBytes(
 		r.ContentLength,
 		"下载中",
 	)
-	io.Copy(io.MultiWriter(f, DownloadBar), r.Body)
+	_, _ = io.Copy(io.MultiWriter(f, DownloadBar), r.Body)
 }
 
 // 运行时打开系统浏览器
@@ -114,5 +120,6 @@ func OpenBrowser(uri string) error {
 	}
 
 	cmd := exec.Command(run, uri)
+	//nolint:wrapcheck
 	return cmd.Start()
 }

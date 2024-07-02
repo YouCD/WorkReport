@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"WorkReport/common"
-	"fmt"
 	"github.com/spf13/cobra"
 	"io"
 	"log"
@@ -21,11 +20,12 @@ func init() {
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "update the WorkReport server",
-	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		os.Rename(path+".tmp", path)
+	PersistentPostRun: func(_ *cobra.Command, _ []string) {
+		if err := os.Rename(path+".tmp", path); err != nil {
+			log.Println(err)
+		}
 	},
-	Run: func(cmd *cobra.Command, args []string) {
-
+	Run: func(_ *cobra.Command, _ []string) {
 		v := common.GetRelease()
 		if Force {
 			path, _ = os.Executable()
@@ -34,9 +34,8 @@ var updateCmd = &cobra.Command{
 		} else if common.Version != v.TagName {
 			path, _ = os.Executable()
 			common.DownloadFileProgress(v.DownloadUrl, path+".tmp")
-
 		} else {
-			log.Println(fmt.Sprintf("version: %s. The version is latest version.", common.Version))
+			log.Printf("version: %s. The version is latest version.", common.Version)
 			return
 		}
 

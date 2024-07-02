@@ -1,16 +1,16 @@
 <template>
-  <div style="background: white;margin-bottom: 10px;padding: 10px">
+  <div style="background: white;margin-bottom: 10px;padding: 10px;border-radius: 6px;">
     <a-range-picker @change="onRangeChange" style="width: 75%;"/>
     <a-button type="primary" style="float: right;width: 20%;" @click="ExportLogHandler">导出日志</a-button>
   </div>
-  <div style="background: white;margin-bottom: 10px;padding: 10px">
+  <div style="background: white;margin-bottom: 10px;padding: 10px;border-radius: 6px;">
     <a-input-search style="width: 75%;" v-model:value="data.content" placeholder="输入工作内容" enter-button
                     @search="SearchLogHandler"/>
     <a-button type="primary" style="float: right;width: 20%;" @click="ResetSearchLogHandler">重置</a-button>
   </div>
 
 
-  <div style="  background: white;   padding: 10px;">
+  <div style="background: white;   padding: 10px;border-radius: 6px;">
     <a-table
         :columns="data.columns"
         :data-source="LogData"

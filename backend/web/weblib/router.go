@@ -1,4 +1,4 @@
-package Weblib
+package weblib
 
 import (
 	"WorkReport/web/dist"
@@ -19,11 +19,9 @@ func StaticServe(fs embed.FS) gin.HandlerFunc {
 			return
 		}
 	}
-
 }
 
 func NewGinRouter() *gin.Engine {
-
 	ginRouter := gin.Default()
 	ginRouter.Use(StaticServe(dist.Dist))
 
@@ -74,7 +72,6 @@ func NewGinRouter() *gin.Engine {
 		//更新
 		workLog.Handle("GET", "/updateCheck", UpdateCheck)
 		workLog.Handle("GET", "/update", Update)
-
 	}
 
 	return ginRouter

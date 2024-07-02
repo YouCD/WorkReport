@@ -3,9 +3,11 @@ package cmd
 import (
 	"WorkReport/common"
 	"WorkReport/web"
-	"WorkReport/web/model/utils"
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/youcd/toolkit/db"
+	"gorm.io/gorm/logger"
+	"log"
 )
 
 func init() {
@@ -19,11 +21,16 @@ func init() {
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "run server.",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		if DBUser != "" && DBPwd != "" && DBHost != "" && DBPort != "" && DBName != "" {
-			utils.InitDB(DBUser, DBPwd, DBHost, DBPort, DBName)
+			//utils.InitDB(DBUser, DBPwd, DBHost, DBPort, DBName)
+			db.InitDB(DBUser, DBPwd, DBHost, DBPort, DBName, logger.Silent)
 			fmt.Printf("\r  \033[36%s\033[m  ", Logo)
-			common.OpenBrowser(fmt.Sprintf("http://%s:%s/#/", "127.0.0.1", Port))
+			//nolint:
+			err := common.OpenBrowser(fmt.Sprintf("http://%s:%s/#/", "127.0.0.1", Port))
+			if err != nil {
+				log.Println(err)
+			}
 			web.StartServer(Port)
 		}
 

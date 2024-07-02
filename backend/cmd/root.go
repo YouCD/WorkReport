@@ -17,6 +17,7 @@ var (
 	Port string
 )
 
+//nolint:dupword
 const Logo = `                                                                      
 m     m               #      mmmmm                                m   
 #  #  #  mmm    m mm  #   m  #   "#  mmm   mmmm    mmm    m mm  mm#mm 
@@ -33,8 +34,8 @@ var rootCmd = &cobra.Command{
 	Short: fmt.Sprintf("%s 是用于记录工作日志的系统", Name),
 	Long:  fmt.Sprintf("%s 是用于记录工作日志的系统", Name),
 
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+	Run: func(cmd *cobra.Command, _ []string) {
+		_ = cmd.Help()
 	},
 }
 
@@ -57,7 +58,7 @@ func init() {
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number of workLog",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		fmt.Printf("Version:   %s\n", common.Version)
 		fmt.Printf("CommitID:  %s\n", common.CommitID)
 		fmt.Printf("BuildTime: %s\n", common.BuildTime)

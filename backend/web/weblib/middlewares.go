@@ -1,4 +1,4 @@
-package Weblib
+package weblib
 
 import (
 	"github.com/gin-gonic/gin"
@@ -11,16 +11,15 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			ctx.Next()
 			return
 		}
+		//nolint:canonicalheader
 		jwtStr := ctx.Request.Header.Get("jwt")
 
 		_, flag := ParseToken(jwtStr)
 		if flag {
 			ctx.Next()
-			return
 		} else {
 			ctx.JSON(401, NewEmptyDataErrorResponse("无效的Token"))
 			ctx.Abort()
-			return
 		}
 	}
 }
@@ -41,6 +40,5 @@ func CorsMiddleware() gin.HandlerFunc {
 		}
 		// 处理请求
 		c.Next()
-		return
 	}
 }

@@ -24,13 +24,12 @@ func init() {
 	initCmd.Flags().StringVarP(&DBPort, "DBPort", "c", "3306", "database host port.")
 	initCmd.Flags().StringVarP(&username, "username", "n", "admin", "login username.")
 	initCmd.Flags().StringVarP(&password, "password", "w", "P@ssw0rd", "login user password.")
-
 }
 
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "init database.",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		if DBUser != "" && DBPwd != "" && DBHost != "" && DBPort != "" && DBName != "" && username != "" && password != "" {
 			err := utils.InitTables(DBUser, DBPwd, DBHost, DBPort, DBName, username, password)
 			if err != nil {
@@ -39,7 +38,7 @@ var initCmd = &cobra.Command{
 			}
 		} else {
 			log.Println("please enter DBUser,DBPwd,DBHost,DBPort,DBName.")
-			cmd.Help()
+			_ = cmd.Help()
 		}
 
 	},

@@ -1,5 +1,5 @@
-web/dist/*
-!web/dist/dist.go
+backend/web/dist/*
+!backend/web/dist/dist.go
 WorkReport
 .idea
 WorkReportFrontend

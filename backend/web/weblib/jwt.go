@@ -1,4 +1,4 @@
-package Weblib
+package weblib
 
 import (
 	"github.com/dgrijalva/jwt-go"
@@ -28,13 +28,14 @@ func GenerateToken(username string) (string, error) {
 	// 使用指定的签名方法创建签名对象
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 	// 使用指定的secret签名并获得完整的编码后的字符串token
+	//nolint:wrapcheck
 	return token.SignedString(MySecret)
 }
 
 // ParseToken 解析JWT
 func ParseToken(tokenString string) (*MyAuth, bool) {
 	// 解析token
-	token, err := jwt.ParseWithClaims(tokenString, &MyAuth{}, func(token *jwt.Token) (i interface{}, err error) {
+	token, err := jwt.ParseWithClaims(tokenString, &MyAuth{}, func(_ *jwt.Token) (interface{}, error) {
 		return MySecret, nil
 	})
 	if err != nil {

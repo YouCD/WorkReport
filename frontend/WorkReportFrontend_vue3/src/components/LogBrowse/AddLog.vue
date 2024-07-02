@@ -176,7 +176,7 @@ const AddLogHandler = async () => {
   height: 425px;
   background: white;
   float: left;
-  border-radius: 4px;
+  border-radius: 6px;
   margin-right: 10px;
 }
 
@@ -188,9 +188,9 @@ const AddLogHandler = async () => {
 .RightClass {
   float: left;
   padding: 10px;
-  width: 300px;
+  width: 400px;
   background: white;
-  border-radius: 4px;
+  border-radius: 6px;
   height: 425px;
 }
 

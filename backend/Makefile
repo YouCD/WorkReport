@@ -37,3 +37,5 @@ build-all:
 clean:
 	rm -rf bin
 	rm -rf web/dist/assets  web/dist/index.html
+check:
+	@golangci-lint run ./...
