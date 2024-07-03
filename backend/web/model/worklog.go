@@ -13,6 +13,8 @@ func (SysDic) TableName() string {
 }
 
 // UserTable 用户表
+//
+//nolint:tagliatelle
 type UserTable struct {
 	ID         int    `gorm:"primaryKey;column:id;type:int(11) AUTO_INCREMENT;not null" json:"-"`
 	UserName   string `gorm:"unique;column:user_name;type:varchar(100)" json:"user_name"` // 用户名
@@ -38,6 +40,8 @@ func (WorkContent) TableName() string {
 }
 
 // WorkContentResp 获取工作内容
+//
+//nolint:tagliatelle
 type WorkContentResp struct {
 	ID      int    `json:"id"`
 	Date    int64  `json:"date"`     // 日期

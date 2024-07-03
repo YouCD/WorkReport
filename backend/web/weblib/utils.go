@@ -3,11 +3,12 @@ package weblib
 import (
 	"WorkReport/common"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/youcd/toolkit/log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -68,12 +69,12 @@ func Update(ctx *gin.Context) {
 	wg := sync.WaitGroup{}
 	client, err := upgrade.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return
 	}
 
 	if err = client.WriteMessage(websocket.TextMessage, []byte("开始更新,请稍候...")); err != nil {
-		log.Println(err)
+		log.Error(err)
 	}
 
 	path, _ := os.Executable()
@@ -85,7 +86,7 @@ func Update(ctx *gin.Context) {
 			common.DownloadFileProgress(versionInfo.DownloadUrl, path+".tmp")
 		}
 		if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！")); err != nil {
-			log.Println(err)
+			log.Error(err)
 		}
 		IsUpdated = true
 		wg.Done()
@@ -96,15 +97,15 @@ func Update(ctx *gin.Context) {
 			time.Sleep(time.Second * 1)
 			if common.DownloadBar.State().CurrentPercent > 0 {
 				if err = client.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("更新中...已完成%.2f%%", common.DownloadBar.State().CurrentPercent*100))); err != nil {
-					log.Println(err)
+					log.Error(err)
 				}
 			}
 			if common.DownloadBar.State().CurrentPercent == 1 {
 				if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！")); err != nil {
-					log.Println(err)
+					log.Error(err)
 				}
 				if err := os.Rename(path+".tmp", path); err != nil {
-					log.Println(err)
+					log.Error(err)
 				}
 				wg.Done()
 				break

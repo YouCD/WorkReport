@@ -4,9 +4,10 @@ import (
 	"WorkReport/web/model"
 	"bytes"
 	"encoding/json"
+	"io"
+
 	"github.com/gin-gonic/gin"
 	"github.com/youcd/toolkit/db"
-	"io"
 )
 
 type User struct {

@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"WorkReport/web/model/utils"
+
 	"github.com/spf13/cobra"
-	"log"
+	"github.com/youcd/toolkit/log"
 )
 
 var (
@@ -31,13 +32,12 @@ var initCmd = &cobra.Command{
 	Short: "init database.",
 	Run: func(cmd *cobra.Command, _ []string) {
 		if DBUser != "" && DBPwd != "" && DBHost != "" && DBPort != "" && DBName != "" && username != "" && password != "" {
-			err := utils.InitTables(DBUser, DBPwd, DBHost, DBPort, DBName, username, password)
-			if err != nil {
-				log.Println(err)
+			if err := utils.InitTables(DBUser, DBPwd, DBHost, DBPort, DBName, username, password); err != nil {
+				log.Error(err)
 				return
 			}
 		} else {
-			log.Println("please enter DBUser,DBPwd,DBHost,DBPort,DBName.")
+			log.Info("please enter DBUser,DBPwd,DBHost,DBPort,DBName.")
 			_ = cmd.Help()
 		}
 

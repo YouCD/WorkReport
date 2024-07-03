@@ -1,8 +1,9 @@
 package weblib
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 type MyAuth struct {
@@ -19,7 +20,7 @@ func GenerateToken(username string) (string, error) {
 	// 创建一个我们自己的声明
 	c := MyAuth{
 		username, // 自定义字段
-		//roles,
+		// roles,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(), // 过期时间
 			Issuer:    "WorkLog System",                           // 签发人

@@ -7,9 +7,12 @@ import (
 	"gorm.io/gorm"
 )
 
+//nolint:revive
 var globalIsRelated bool = true // 全局预加载
 
 // prepare for other
+//
+//nolint:containedctx
 type _BaseMgr struct {
 	*gorm.DB
 	ctx       context.Context
@@ -37,6 +40,8 @@ func (obj *_BaseMgr) GetCtx() context.Context {
 }
 
 // Cancel cancel context
+//
+//nolint:revive
 func (obj *_BaseMgr) Cancel(c context.Context) {
 	obj.cancel()
 }
@@ -71,6 +76,8 @@ type options struct {
 }
 
 // Option overrides behavior of Connect.
+//
+//nolint:inamedparam
 type Option interface {
 	apply(*options)
 }

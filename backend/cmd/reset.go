@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"WorkReport/web/model/utils"
+
 	"github.com/spf13/cobra"
 	"github.com/youcd/toolkit/db"
+	"github.com/youcd/toolkit/log"
 	"gorm.io/gorm/logger"
-	"log"
 )
 
 func init() {
@@ -24,9 +25,8 @@ var resetCmd = &cobra.Command{
 	Run: func(_ *cobra.Command, _ []string) {
 		if DBUser != "" && DBPwd != "" && DBHost != "" && DBPort != "" && DBName != "" {
 			db.InitDB(DBUser, DBPwd, DBHost, DBPort, DBName, logger.Silent)
-			err := utils.CreateOrUpdateUser(username, password)
-			if err != nil {
-				log.Println(err)
+			if err := utils.CreateOrUpdateUser(username, password); err != nil {
+				log.Error(err)
 			}
 		}
 	},

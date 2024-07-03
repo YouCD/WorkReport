@@ -1,19 +1,21 @@
 package common
 
 import (
+	"context"
 	"fmt"
-	"github.com/schollz/progressbar/v3"
-	"github.com/tidwall/gjson"
 	"io"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/schollz/progressbar/v3"
+	"github.com/tidwall/gjson"
+	"github.com/youcd/toolkit/log"
 )
 
+//nolint:revive
 const (
 	GitHubReleaseUrl = "https://api.github.com/repos/youcd/WorkReport/releases/latest"
 )
@@ -24,29 +26,29 @@ var commands = map[string]string{
 	"linux":   "xdg-open",
 }
 
-//nolint:tagliatelle
+//nolint:tagliatelle,revive
 type ReleaseVersion struct {
 	TagName     string `json:"tag_name"`
 	SwName      string `json:"sw_name"`
 	DownloadUrl string `json:"download_url"`
 }
 
-func GetRelease() (v ReleaseVersion) {
-	//系统类型
+func GetRelease() ReleaseVersion {
+	// 系统类型
 	OS := runtime.GOOS
 	resp, err := http.Get(GitHubReleaseUrl)
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 	}
 	defer resp.Body.Close()
-	bytes, err := ioutil.ReadAll(resp.Body)
+	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 	}
 	vList := make([]ReleaseVersion, 0)
 	count := gjson.Get(string(bytes), "assets.#").Int()
-
-	for i := 0; i < int(count); i++ {
+	var v ReleaseVersion
+	for i := range count {
 		v.TagName = gjson.Get(string(bytes), "tag_name").Str
 		v.SwName = gjson.Get(string(bytes), fmt.Sprintf("assets.%d.name", i)).Str
 		v.DownloadUrl = gjson.Get(string(bytes), fmt.Sprintf("assets.%d.browser_download_url", i)).Str
@@ -72,39 +74,37 @@ func GetRelease() (v ReleaseVersion) {
 			}
 		}
 	}
-	return
+	return v
 }
 
 var (
-	//nolint:typecheck
 	DownloadBar = new(progressbar.ProgressBar)
 )
 
 func DownloadFileProgress(url, filename string) {
 Download:
-	r, err := http.Get(url)
+	r, err := http.NewRequestWithContext(context.TODO(), http.MethodGet, url, nil)
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		goto Download
 	}
 	defer func() { _ = r.Body.Close() }()
 	f, err := os.Create(filename)
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return
 	}
 	// 更改权限
 	err = f.Chmod(0775)
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		err = os.Rename(filename, strings.Split(filename, ".tmp")[0])
-		log.Println(err)
+		log.Error(err)
 	}
 	defer func() {
 		_ = f.Close()
-		log.Println("更新退出程序.....")
+		log.Info("更新退出程序.....")
 	}()
-	//nolint:typecheck
 	DownloadBar = progressbar.DefaultBytes(
 		r.ContentLength,
 		"下载中",
@@ -116,6 +116,7 @@ Download:
 func OpenBrowser(uri string) error {
 	run, ok := commands[runtime.GOOS]
 	if !ok {
+		//nolint:err113
 		return fmt.Errorf("don't know how to open things on %s platform", runtime.GOOS)
 	}
 

@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"WorkReport/common"
-	"github.com/spf13/cobra"
 	"io"
-	"log"
 	"os"
+
+	"github.com/youcd/toolkit/log"
+
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -22,7 +24,7 @@ var updateCmd = &cobra.Command{
 	Short: "update the WorkReport server",
 	PersistentPostRun: func(_ *cobra.Command, _ []string) {
 		if err := os.Rename(path+".tmp", path); err != nil {
-			log.Println(err)
+			log.Error(err)
 		}
 	},
 	Run: func(_ *cobra.Command, _ []string) {
@@ -35,7 +37,7 @@ var updateCmd = &cobra.Command{
 			path, _ = os.Executable()
 			common.DownloadFileProgress(v.DownloadUrl, path+".tmp")
 		} else {
-			log.Printf("version: %s. The version is latest version.", common.Version)
+			log.Infof("version: %s. The version is latest version.", common.Version)
 			return
 		}
 

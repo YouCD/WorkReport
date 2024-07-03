@@ -3,6 +3,8 @@ package web
 import (
 	"WorkReport/web/weblib"
 	"fmt"
+
+	"github.com/youcd/toolkit/log"
 )
 
 func StartServer(port string) {
@@ -10,11 +12,11 @@ func StartServer(port string) {
 	router := weblib.NewGinRouter()
 	if port != "" {
 		if err := router.Run(":" + port); err != nil {
-			fmt.Println(err)
+			log.Error(err)
 			return
 		}
 	}
 	if err := router.Run(); err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 }

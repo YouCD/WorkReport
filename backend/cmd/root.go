@@ -3,11 +3,10 @@ package cmd
 import (
 	"WorkReport/common"
 	"fmt"
-	"github.com/spf13/cobra"
-	"log"
-
-	//"github.com/spf13/viper"
 	"os"
+
+	"github.com/spf13/cobra"
+	"github.com/youcd/toolkit/log"
 )
 
 // var cfgFile string
@@ -41,13 +40,13 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Println(err)
+		log.Error(err)
 		os.Exit(1)
 	}
 }
 
 func init() {
-	//cobra.OnInitialize(initConfig)
+	// cobra.OnInitialize(initConfig)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(runCmd)

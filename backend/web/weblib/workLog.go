@@ -1,19 +1,19 @@
 package weblib
 
 import (
+	"WorkReport/web/model"
+	"WorkReport/web/model/utils"
 	"bytes"
 	"encoding/json"
-	"github.com/xuri/excelize/v2"
-	"github.com/youcd/toolkit/db"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
 
-	"WorkReport/web/model"
-	"WorkReport/web/model/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
+	"github.com/youcd/toolkit/db"
+	"github.com/youcd/toolkit/log"
 )
 
 type ResourceData struct {
@@ -68,7 +68,7 @@ func ErrToMsg(err error) string {
 	var data = []byte(err.Error())
 	//nolint:musttag
 	if err = json.Unmarshal(data, &msgStruct); err != nil {
-		log.Println(err)
+		log.Error(err)
 	}
 
 	return msgStruct.Detail
@@ -263,7 +263,7 @@ func GetFirstDateOfWeek() int64 {
 	}
 
 	weekStartDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local).AddDate(0, 0, offset)
-	//weekMonday = weekStartDate.Format("2006-01-02")
+	// weekMonday = weekStartDate.Format("2006-01-02")
 	return weekStartDate.Unix()
 }
 func getWorkLogFromWeek(ctx *gin.Context) {
@@ -408,6 +408,6 @@ func downloadWorklog(ctx *gin.Context) {
 	ctx.Header("Content-Type", "application/octet-stream")
 	ctx.Header("Content-Disposition", "attachment; filename="+"WorkLog.xlsx")
 	ctx.Header("Content-Transfer-Encoding", "binary")
-	//回写到web 流媒体 形成下载
+	// 回写到web 流媒体 形成下载
 	_ = f.Write(ctx.Writer)
 }
