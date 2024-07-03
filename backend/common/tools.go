@@ -1,7 +1,6 @@
 package common
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -36,6 +35,7 @@ type ReleaseVersion struct {
 func GetRelease() ReleaseVersion {
 	// 系统类型
 	OS := runtime.GOOS
+	//nolint:gosec
 	resp, err := http.Get(GitHubReleaseUrl)
 	if err != nil {
 		log.Error(err)
@@ -83,7 +83,8 @@ var (
 
 func DownloadFileProgress(url, filename string) {
 Download:
-	r, err := http.NewRequestWithContext(context.TODO(), http.MethodGet, url, nil)
+	//nolint:gosec
+	r, err := http.Get(url)
 	if err != nil {
 		log.Error(err)
 		goto Download
