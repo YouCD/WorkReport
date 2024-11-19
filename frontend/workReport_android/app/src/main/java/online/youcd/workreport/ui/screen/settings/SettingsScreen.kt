@@ -124,7 +124,7 @@ fun AddTypePage(onChange: (page: Int) -> Unit) {
 
     // 使用 LaunchedEffect 在数据变化时发起网络请求
     viewModel.getWorkType1ByPid()
-    val pagerState = rememberPagerState(initialPage = 0)
+    val pagerState = rememberPagerState{ 2 }
 //    val animatedPage by animateIntAsState(pagerState.currentPage, label = "")
 
     HorizontalPager(
@@ -132,7 +132,7 @@ fun AddTypePage(onChange: (page: Int) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        pageCount = 2
+
     ) {
         onChange(pagerState.currentPage)
         InputBoxGroup(pagerState.currentPage, selectedData = data ?: emptyList())
