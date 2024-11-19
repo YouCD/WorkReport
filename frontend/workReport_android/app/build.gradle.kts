@@ -4,12 +4,12 @@ plugins {
 }
 android {
     namespace = "online.youcd.workreport"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "online.youcd.workreport"
         minSdk = 29
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -18,7 +18,9 @@ android {
             useSupportLibrary = true
         }
     }
-
+    kotlinOptions {
+        jvmTarget = "17"  // 或者设置为 "11"，根据你的项目需要
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -49,7 +51,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
@@ -64,7 +66,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.06.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
@@ -79,7 +81,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.3.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     // 图表
     // https://mavenlibs.com/maven/dependency/com.himanshoe/charty
     implementation("com.himanshoe:charty:2.0.0-alpha01")
@@ -87,8 +89,8 @@ dependencies {
     // 翻页器
     implementation("androidx.paging:paging-compose:3.2.0")
     // 持久化
-    implementation("androidx.datastore:datastore-preferences:1.1.0-alpha04")
-    implementation("androidx.datastore:datastore-core:1.1.0-alpha04")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.datastore:datastore-core:1.1.1")
     // jwt
     implementation("com.auth0.android:jwtdecode:2.0.2")
 
