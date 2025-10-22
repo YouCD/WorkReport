@@ -10,3 +10,4 @@ web/dist.txz
 upx
 upx-3.96-amd64_linux.tar.xz
 upx-3.96-amd64_linux/
+config.local.yaml
