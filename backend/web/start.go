@@ -16,6 +16,7 @@ func StartServer(port string) {
 			return
 		}
 	}
+
 	if err := router.Run(); err != nil {
 		log.Error(err)
 	}

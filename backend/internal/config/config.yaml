@@ -1,0 +1,78 @@
+llm:
+  apiKey: "xxxxxxxxx"
+  baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  model: "qwen3-235b-a22b-instruct-2507" #"glm-4.5-flash" # "qwen3-235b-a22b-instruct-2507" # "glm-4.5" "qwen-turbo" "qwen3-235b-a22b-instruct-2507"
+prompt: |
+  ### 🌿 提示词优化版：项目工作内容整理器
+  请根据输入的**工作内容**进行智能整理、去重、进度生成。
+  ---
+  #### 🧭 已知项目信息：
+  - **柔性项目**：代号 smartflex
+  - **SSCRA**
+  - **XDR**
+  ---
+  #### 🧩 处理要求：
+  1. **按项目归类输出结果**，并自动：
+     - 检查并修正**错别字**；
+     - 删除**重复或冗余项**；
+     - 按项目名称分组返回： 如果项目没有对应的工作事项，则不返回该项目所有信息
+  2. **为每个工作事项生成随机进度百分比**。
+     数量限制：
+     - 随机进度百分比< 100%的数量: ≤ 2
+     工作事项内容补充与完善：
+     - 根据工作大类与子类合理补充或完善工作事项内容
+  3. **todo 生成规则**：
+     - 若生成的进度 < 100%，则添加到 todo；
+     - 若进度 = 100%，则视为已完成，不加入 todo；
+     - todo 数量 ≤ 2；
+     - todo 总数 = 所有项目中未完成事项的数量。
+  ---
+  #### 🧾 输出格式（JSON）：
+  {"contents":{"项目A":["项目A工作事项A（100%）","项目A工作事项B（50%）"],"项目B":["项目B工作事项A（30%）","项目B工作事项B（100%）"]},"todo":["项目B工作事项A（持续）","项目A工作事项B（持续）"]}
+
+db:
+  host: "192.168.111.10"
+  user: root
+  pwd: P@ssw0rd
+  port: 3306
+  name: worklog
+email:
+  host: "smtp.qiye.aliyun.com"
+  port: "465"
+  user: a@a.onaliyun.com
+  pwd: sasa
+  to:
+    - "a@a.onaliyun.com"
+  cc:
+    - "a@a.onaliyun.com"
+  subject: "（{{ dateFormat (weekStart) \"20060102\" }}~{{ dateFormat (weekEnd) \"20060102\" }}） {{if .Urgent}}[紧急]{{end}}【{{.project}}】{{.type}} - {{.Author}}"
+  subjectData:
+    Project: "项目B"
+    Type: "日报"
+    Author: "小张"
+    Start: "2025-10-21"
+    End: "2025-10-21"
+    Urgent: true
+  contentTpl: |
+    一、本周工作内容：
+      {{- $index := 1}}
+      {{- range $key, $value := .Contents}}
+        {{- if gt (len $value) 0}}
+            {{$index}}、{{$key}}：
+                {{- range $c := $value}}
+                * {{$c}}
+                {{- end}} 
+            {{- $index = add $index 1}}
+        {{- end}} 
+      {{- end}}
+    二、下周工作计划：
+      {{- $index := 1}}
+      {{- range  $value := .Todo}}
+          {{$index}}、{{$value}}
+          {{- $index = add $index 1}}
+      {{- end}}
+
+global:
+  logLevel: "info"
+  port: 8080
+  token: youcd

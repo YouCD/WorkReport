@@ -2,18 +2,21 @@ package cmd
 
 import (
 	"WorkReport/common"
+	"WorkReport/internal/config"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/youcd/toolkit/db"
+	"github.com/youcd/toolkit/file"
 	"github.com/youcd/toolkit/log"
+	"gorm.io/gorm/logger"
 )
 
 // var cfgFile string
 var (
-	Name = "WorkReport"
-
-	Port string
+	Name       = "WorkReport"
+	configFile string
 )
 
 //nolint:dupword
@@ -29,10 +32,24 @@ m     m               #      mmmmm                                m
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   Name,
-	Short: fmt.Sprintf("%s 是用于记录工作日志的系统", Name),
-	Long:  fmt.Sprintf("%s 是用于记录工作日志的系统", Name),
-
+	Use:  Name,
+	Long: fmt.Sprintf("%s 是用于记录工作日志的系统", Name),
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if !file.Exists(configFile) {
+			fmt.Println("请指定配置文件： -f ")
+			os.Exit(1)
+		}
+		config.ParserConfig(configFile)
+		var logLevel logger.LogLevel
+		if config.Cfg.Global.LogLevel == "debug" {
+			logLevel = logger.Info
+		} else {
+			logLevel = logger.Silent
+		}
+		db.InitDB(config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, logLevel)
+		log.Init(nil)
+		log.SetLogLevel(config.Cfg.Global.LogLevel)
+	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
 	},
@@ -47,11 +64,14 @@ func Execute() {
 
 func init() {
 	// cobra.OnInitialize(initConfig)
-	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(initCmd)
-	rootCmd.AddCommand(runCmd)
-	rootCmd.AddCommand(updateCmd)
-	rootCmd.AddCommand(resetCmd)
+	rootCmd.AddCommand(versionCmd,
+		initCmd,
+		runCmd,
+		updateCmd,
+		resetCmd,
+	)
+
+	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "f", "", "配置文件")
 }
 
 var versionCmd = &cobra.Command{

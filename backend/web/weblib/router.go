@@ -1,6 +1,8 @@
 package weblib
 
 import (
+	"WorkReport/internal/config"
+	"WorkReport/pkg/mcp"
 	"WorkReport/web/dist"
 	"embed"
 	"net/http"
@@ -28,51 +30,59 @@ func NewGinRouter() *gin.Engine {
 
 	ginRouter.Use(CorsMiddleware())
 
+	mcp.NewMCPServer(config.Cfg.Global.Token).RunWithGin(ginRouter)
+
 	// 用户登入
-	ginRouter.Handle("POST", "/api/login", Login)
+	ginRouter.Handle(http.MethodPost, "/api/login", Login)
 
 	// ginRouter.Use(JWTAuthMiddleware())
 	workLog := ginRouter.Group("/api/w")
 	workLog.Use(JWTAuthMiddleware())
 	{
 		// 添加workLog
-		workLog.Handle("POST", "/workLog", addWorkLog)
+		workLog.Handle(http.MethodPost, "/workLog", addWorkLog)
 		// 获取workLog
-		workLog.Handle("GET", "/workLog", getWorkLog)
+		workLog.Handle(http.MethodGet, "/workLog", getWorkLog)
 		// 修改WorkLog
-		workLog.Handle("PUT", "/workLog", modifyWorkLog)
+		workLog.Handle(http.MethodPut, "/workLog", modifyWorkLog)
 		// 删除WorkLog
-		workLog.Handle("DELETE", "/workLog", delWorkLog)
-
+		workLog.Handle(http.MethodDelete, "/workLog", delWorkLog)
 		// 获取工作大类
-		workLog.Handle("GET", "/workType1", getWorkType1)
+		workLog.Handle(http.MethodGet, "/workType1", getWorkType1)
 		// 添加工作种类
-		workLog.Handle("POST", "/workType", addWorkType)
+		workLog.Handle(http.MethodPost, "/workType", addWorkType)
 		// 获取工作子类
-		workLog.Handle("GET", "/workType2", getWorkType2)
+		workLog.Handle(http.MethodGet, "/workType2", getWorkType2)
 		// 获取指定工作类别
-		workLog.Handle("GET", "/workType", getWorkType)
+		workLog.Handle(http.MethodGet, "/workType", getWorkType)
 		// 修改指定工作类别
-		workLog.Handle("PUT", "/workType", editWorkType)
+		workLog.Handle(http.MethodPut, "/workType", editWorkType)
 		// 通过type ID 获取设备工作内容
-		workLog.Handle("GET", "/workLogFromType", getWorkLogFromType)
+		workLog.Handle(http.MethodGet, "/workLogFromType", getWorkLogFromType)
 		// 获取本周日志
-		workLog.Handle("GET", "/workLogFromWeek", getWorkLogFromWeek)
+		workLog.Handle(http.MethodGet, "/workLogFromWeek", getWorkLogFromWeek)
 		// 获取本月日志
-		workLog.Handle("GET", "/workLogFromMonth", getWorkLogFromWeek)
+		workLog.Handle(http.MethodGet, "/workLogFromMonth", getWorkLogFromWeek)
 		// 通过内容搜索日志
-		workLog.Handle("GET", "/workLogFromContent", getWorkLogFromContent)
+		workLog.Handle(http.MethodGet, "/workLogFromContent", getWorkLogFromContent)
 		// 通过日期搜索日志
-		workLog.Handle("GET", "/workLogFromDate", getWorkLogFromDate)
+		workLog.Handle(http.MethodGet, "/workLogFromDate", getWorkLogFromDate)
 		// 通过type1获得总数量
-		workLog.Handle("GET", "/type1Count", gettype1Count)
+		workLog.Handle(http.MethodGet, "/type1Count", gettype1Count)
 		// 通过type2获得总数量
-		workLog.Handle("GET", "/type2Count", gettype2Count)
+		workLog.Handle(http.MethodGet, "/type2Count", gettype2Count)
 		// 下载指定时间范围的工作日志
-		workLog.Handle("GET", "/downloadWorklog", downloadWorklog)
+		workLog.Handle(http.MethodGet, "/downloadWorklog", downloadWorklog)
 		// 更新
-		workLog.Handle("GET", "/updateCheck", UpdateCheck)
-		workLog.Handle("GET", "/update", Update)
+		workLog.Handle(http.MethodGet, "/updateCheck", UpdateCheck)
+		workLog.Handle(http.MethodGet, "/update", Update)
+	}
+	ai := ginRouter.Group("/api/ai")
+	ai.Use(JWTAuthMiddleware())
+	{
+		ai.Handle(http.MethodPost, "/addContent", addContent)
+		ai.Handle(http.MethodGet, "/workLogFromWeek", workLogFromWeek)
+		ai.Handle(http.MethodPost, "/sendEmail", sendEmail)
 	}
 
 	return ginRouter

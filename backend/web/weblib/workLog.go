@@ -1,6 +1,7 @@
 package weblib
 
 import (
+	"WorkReport/pkg/tools"
 	"WorkReport/web/model"
 	"WorkReport/web/model/utils"
 	"bytes"
@@ -67,8 +68,10 @@ func ErrToMsg(err error) string {
 	var msgStruct = ErrToMsgStruct{}
 	var data = []byte(err.Error())
 	//nolint:musttag
-	if err = json.Unmarshal(data, &msgStruct); err != nil {
+	if err2 := json.Unmarshal(data, &msgStruct); err2 != nil {
 		log.Error(err)
+		log.Error(err2)
+		return err.Error()
 	}
 
 	return msgStruct.Detail
@@ -234,7 +237,6 @@ func getWorkType2(ctx *gin.Context) {
 	err := h.Where("type =2 and pid = ?", utils.StrToInt32(ctx.Query("pid"))).Scan(&tmp.TypeList).Error
 	if err != nil {
 		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
-
 		return
 	}
 
@@ -253,23 +255,11 @@ func getWorkLogFromType(ctx *gin.Context) {
 	ctx.JSON(200, NewSuccessResponse("获取成功", tmp))
 }
 
-// 获取本周周一的日期
-func GetFirstDateOfWeek() int64 {
-	now := time.Now()
-
-	offset := int(time.Monday - now.Weekday())
-	if offset > 0 {
-		offset = -6
-	}
-
-	weekStartDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local).AddDate(0, 0, offset)
-	// weekMonday = weekStartDate.Format("2006-01-02")
-	return weekStartDate.Unix()
-}
 func getWorkLogFromWeek(ctx *gin.Context) {
 	h := model.WorkContentMgr(db.GetDB())
-	result, _ := h.PagerFromWeek(GetFirstDateOfWeek(), GetFirstDateOfWeek()+604799)
-	r := make(map[string][]string, 0)
+	t := tools.GetFirstDateOfWeek()
+	result, _ := h.PagerFromWeek(t.Unix(), t.Unix()+604799)
+	r := make(map[string][]string)
 	for _, v := range result {
 		r[v.Type1] = append(r[v.Type1], v.Content)
 	}
