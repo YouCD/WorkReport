@@ -107,12 +107,15 @@ func AddWorkLog(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallTool
 	if type1 == 0 || type2 == 0 {
 		return nil, errors.New("未找到对应的工作类别")
 	}
-
+	d := c.Date
+	if d == 0 {
+		d = time.Now().Unix()
+	}
 	workContent := model.WorkContent{
 		Type1:   type1,
 		Type2:   type2,
 		Content: workTypes.Content,
-		Date:    time.Now().Unix(),
+		Date:    d,
 	}
 	h := model.WorkContentMgr(db.GetDB())
 	err = h.Create(&workContent).Error

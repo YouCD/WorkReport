@@ -1,7 +1,6 @@
 package mcp
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +27,7 @@ func NewMCPServer(token string) *MCPServer {
 
 func (s *MCPServer) RunWithGin(router *gin.Engine) {
 	stream := server.NewStreamableHTTPServer(s.MCPServer, server.WithLogger(log.GetLogger()))
-	s.Run(context.Background())
+	s.Init()
 	// 将MCP处理程序注册到Gin路由器
 	router.Any("/mcp", func(c *gin.Context) {
 		// 应用token验证
@@ -43,7 +42,7 @@ func (s *MCPServer) RunWithGin(router *gin.Engine) {
 	})
 }
 
-func (s *MCPServer) Run(_ context.Context) {
+func (s *MCPServer) Init() {
 	s.RegisterTool(addWorkLog, AddWorkLog)
 }
 func (s *MCPServer) RegisterTool(tool mcp.Tool, handler server.ToolHandlerFunc) *MCPServer {

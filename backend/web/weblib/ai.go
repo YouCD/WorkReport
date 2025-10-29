@@ -20,37 +20,6 @@ import (
 	"github.com/youcd/toolkit/log"
 )
 
-var (
-	tpl = `一、本周工作内容：
-{{- $index := 1}}
-{{- range $key, $value := .Contents}}
-  {{- if gt (len $value) 0}}
-      {{$index}}、{{$key}}：
-          {{- range $c := $value}}
-          * {{$c}}
-          {{- end}} 
-      {{- $index = add $index 1}}
-  {{- end}} 
-{{- end}}
-
-二、问题：
-    无
-    
-三、建议：
-    无
-    
-四、下周工作计划：
-    1、远程技术支持：SSCRA、XDR、柔性等相关业务（持续）
-{{- $index := 2}}
-{{- range  $value := .Todo}}
-    {{$index}}、{{$value}}
-    {{- $index = add $index 1}}
-{{- end}}
-五、Bug处理情况：
-    无
-`
-)
-
 func addContent(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
