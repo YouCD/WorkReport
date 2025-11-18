@@ -2,12 +2,11 @@
 
 
 download_url=`curl  -s https://api.github.com/repos/youcd/WorkReportFrontend_vue3/releases/latest|grep browser_download_url|awk -F"\"" '{print $4}'`
-cd backend
-wget $download_url -O web/dist.txz
-tar Jxf dist.txz
+wget $download_url -O backend/dist.txz
+tar xf dist.txz -C backend/web
 rm -rf dist.txz
-cd ..
+
 
 wget https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz
 tar xf upx-3.96-amd64_linux.tar.xz
-mv upx-3.96-amd64_linux/upx /bin/upx
+mv upx-3.96-amd64_linux/upx backend
