@@ -6,52 +6,21 @@ on:
       - master
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 'v16.20.2'
-      - name: npm run build
-        run: |
-          node -v
-          npm -v
-          cd frontend/WorkReportFrontend_vue3
-          cat >qiniuKey.json<<EOF
-          {
-            "accessKey": "${{ secrets.SECRETKEY }}",
-            "secretKey": "${{ secrets.ACCESSKEY }}",
-            "bucket": "${{ secrets.BUCKET }}",
-            "publicCdnPath": "${{ secrets.PUBLICCDNPATH }}"
-          }
-          EOF
-          npm -g install npm@9.8.1
-          npm install
-          npm run build
-          npm audit fix
-          rm -rf  dist/log
-          cp -r dist ../../backend/web/
-
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.22.3
-      - name: fetch WorkReportFrontend
-        run: sh build.sh
+          go-version: 1.24.5
 
       - name: Build
-        run: make build-all
-      - name: Upload binary file
-        uses: actions/upload-artifact@v3
-        with:
-          name: WorkReport
-          path: bin/*
+        run: |
+          bash backend/build.sh
+          cd backend
+          make build-all
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'  # 仅在打标签时运行
         with: # 将下述可执行文件 release 上去
           files: |
-            bin/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            backend/bin/*
