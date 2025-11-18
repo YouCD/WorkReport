@@ -33,7 +33,7 @@ func PasswordVerify(password, hash string) bool {
 
 func UpdateCheck(ctx *gin.Context) {
 	if IsUpdated {
-		ctx.JSON(200, NewSuccessResponse("更新完成，请重启软件！", versionInfo))
+		ctx.JSON(200, NewSuccessResponse("更新完成，即将重启软件！", versionInfo))
 		return
 	}
 	go func() {
@@ -85,7 +85,7 @@ func Update(ctx *gin.Context) {
 		if common.DownloadBar.State().CurrentPercent != 1 {
 			common.DownloadFileProgress(versionInfo.DownloadUrl, path+".tmp")
 		}
-		if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！")); err != nil {
+		if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，即将重启软件！")); err != nil {
 			log.Error(err)
 		}
 		IsUpdated = true
@@ -93,21 +93,27 @@ func Update(ctx *gin.Context) {
 	}()
 
 	go func() {
+		defer wg.Done()
 		for {
-			time.Sleep(time.Second * 1)
+			time.Sleep(time.Millisecond * 100)
 			if common.DownloadBar.State().CurrentPercent > 0 {
 				if err = client.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("更新中...已完成%.2f%%", common.DownloadBar.State().CurrentPercent*100))); err != nil {
 					log.Error(err)
 				}
 			}
 			if common.DownloadBar.State().CurrentPercent == 1 {
-				if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，请重启软件！")); err != nil {
+				if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，即将重启软件！")); err != nil {
 					log.Error(err)
 				}
-				if err := os.Rename(path+".tmp", path); err != nil {
+				log.Info("开始重命名")
+				if err = os.Rename(path+".tmp", path); err != nil {
 					log.Error(err)
+					return
 				}
-				wg.Done()
+				client.WriteMessage(websocket.TextMessage, []byte("即将退出"))
+				log.Info("重命名成功")
+				time.Sleep(time.Second * 30)
+				log.Info("即将退出")
 				break
 			}
 		}
@@ -115,4 +121,5 @@ func Update(ctx *gin.Context) {
 	wg.Wait()
 
 	client.Close()
+	os.Exit(0)
 }

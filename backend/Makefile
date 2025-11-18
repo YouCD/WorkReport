@@ -19,6 +19,7 @@ build-linux:
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)-$(VERSION)-linux
 # linux
 build:
+	rm -rf $(BINARY_DIR)/$(BINARY_NAME)
 	@CGO_ENABLED=0 $(GOBUILD) -ldflags $(FLAG) -o $(BINARY_DIR)/$(BINARY_NAME)
 
 #mac

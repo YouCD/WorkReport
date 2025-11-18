@@ -16,17 +16,12 @@ var (
 )
 
 func init() {
-	updateCmd.Flags().BoolVarP(&Force, "force", "f", false, "force updating.")
+	updateCmd.Flags().BoolVar(&Force, "force", false, "force updating.")
 }
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "update the WorkReport server",
-	PersistentPostRun: func(_ *cobra.Command, _ []string) {
-		if err := os.Rename(path+".tmp", path); err != nil {
-			log.Error(err)
-		}
-	},
 	Run: func(_ *cobra.Command, _ []string) {
 		v := common.GetRelease()
 		if Force {
@@ -36,10 +31,12 @@ var updateCmd = &cobra.Command{
 		} else if common.Version != v.TagName {
 			path, _ = os.Executable()
 			common.DownloadFileProgress(v.DownloadUrl, path+".tmp")
-		} else {
-			log.Infof("version: %s. The version is latest version.", common.Version)
-			return
 		}
+		if err := os.Rename(path+".tmp", path); err != nil {
+			log.Error(err)
+		}
+		log.Infof("version: %s. The version is latest version.", common.Version)
+		return
 
 	},
 }

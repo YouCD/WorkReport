@@ -6,8 +6,8 @@ WorkReportFrontend
 bin
 web/Weblib/Weblib-packr.go
 .DS_Store
-web/dist.txz
 upx
 upx-3.96-amd64_linux.tar.xz
 upx-3.96-amd64_linux/
 config.local.yaml
+dist.txz

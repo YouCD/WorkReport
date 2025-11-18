@@ -16,7 +16,9 @@ import (
 
 //nolint:revive
 const (
+	// https://api.github.com/repos/YouCD/movieSpider/releases
 	GitHubReleaseUrl = "https://api.github.com/repos/youcd/WorkReport/releases/latest"
+	ProxyUrl         = "https://ghproxy.cn/"
 )
 
 var commands = map[string]string{
@@ -84,7 +86,12 @@ var (
 func DownloadFileProgress(url, filename string) {
 Download:
 	//nolint:gosec
-	r, err := http.Get(url)
+	if url == "" {
+		log.Info("下载地址为空")
+		return
+	}
+	log.Info("完整下载地址：", ProxyUrl+url)
+	r, err := http.Get(ProxyUrl + url)
 	if err != nil {
 		log.Error(err)
 		goto Download
@@ -99,9 +106,8 @@ Download:
 	err = f.Chmod(0775)
 	if err != nil {
 		log.Error(err)
-		err = os.Rename(filename, strings.Split(filename, ".tmp")[0])
-		log.Error(err)
 	}
+
 	defer func() {
 		_ = f.Close()
 		log.Info("更新退出程序.....")
@@ -113,7 +119,7 @@ Download:
 	_, _ = io.Copy(io.MultiWriter(f, DownloadBar), r.Body)
 }
 
-// 运行时打开系统浏览器
+// OpenBrowser 运行时打开系统浏览器
 func OpenBrowser(uri string) error {
 	run, ok := commands[runtime.GOOS]
 	if !ok {

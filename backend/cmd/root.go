@@ -35,6 +35,10 @@ var rootCmd = &cobra.Command{
 	Use:  Name,
 	Long: fmt.Sprintf("%s 是用于记录工作日志的系统", Name),
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+
+		if cmd.Name() == "version" || cmd.Name() == "update" {
+			return
+		}
 		if !file.Exists(configFile) {
 			fmt.Println("请指定配置文件： -f ")
 			os.Exit(1)
