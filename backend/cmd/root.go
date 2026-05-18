@@ -1,17 +1,15 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"WorkReport/common"
 	"WorkReport/internal/config"
+	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/youcd/toolkit/db"
 	"github.com/youcd/toolkit/file"
 	"github.com/youcd/toolkit/log"
-	"gorm.io/gorm/logger"
 )
 
 // var cfgFile string
@@ -47,15 +45,9 @@ var rootCmd = &cobra.Command{
 		if config.Cfg.Global.ProxyUrl != "" {
 			common.ProxyUrl = config.Cfg.Global.ProxyUrl
 		}
-		var logLevel logger.LogLevel
-		if config.Cfg.Global.LogLevel == "debug" {
-			logLevel = logger.Info
-		} else {
-			logLevel = logger.Silent
-		}
-		db.InitDB(config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, logLevel)
-		log.Init(nil)
+		log.Init(&log.Config{LumberjackCfg: nil, Stdout: true})
 		log.SetLogLevel(config.Cfg.Global.LogLevel)
+		db.InitDB(config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, log.NewGormLogger(1, config.Cfg.Global.LogLevel))
 	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
@@ -64,7 +56,7 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Error(err)
+		log.WithCtx(nil).Error(err)
 		os.Exit(1)
 	}
 }

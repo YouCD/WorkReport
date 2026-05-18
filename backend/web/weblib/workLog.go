@@ -67,13 +67,13 @@ func NewEmptyDataErrorResponse(msg string) *ResourceData {
 	}
 }
 
-func ErrToMsg(err error) string {
+func ErrToMsg(ctx *gin.Context, err error) string {
 	msgStruct := ErrToMsgStruct{}
 	data := []byte(err.Error())
 	//nolint:musttag
 	if err2 := json.Unmarshal(data, &msgStruct); err2 != nil {
-		log.Error(err)
-		log.Error(err2)
+		log.WithCtx(ctx).Error(err)
+		log.WithCtx(ctx).Error(err2)
 		return err.Error()
 	}
 
@@ -94,7 +94,7 @@ type WorkContentRespList struct {
 func addWorkLog(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	var workContent model.WorkContent
@@ -133,7 +133,7 @@ func delWorkLog(ctx *gin.Context) {
 	tmp.ID = id
 	err := h.Delete(&tmp).Error
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
@@ -143,21 +143,21 @@ func delWorkLog(ctx *gin.Context) {
 func modifyWorkLog(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(data))
 	var workContent model.WorkContent
 	err = json.Unmarshal(data, &workContent)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
 	h := model.WorkContentMgr(db.GetDB())
 	err = h.Where("id =?", workContent.ID).Updates(map[string]interface{}{"date": workContent.Date, "type1": workContent.Type1, "type2": workContent.Type2, "content": workContent.Content}).Error
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.JSON(200, NewEmptyDataSuccessResponse("修改成功"))
@@ -167,7 +167,7 @@ func getWorkType1(ctx *gin.Context) {
 	h := model.SysDicMgr(db.GetDB())
 	rows, err := h.GetFromType(1)
 	if err != nil {
-		ctx.JSON(200, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(200, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
@@ -181,7 +181,7 @@ func getWorkType(ctx *gin.Context) {
 	h := model.SysDicMgr(db.GetDB())
 	rows, err := h.GetFromID(id)
 	if err != nil {
-		ctx.JSON(200, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(200, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.JSON(200, NewSuccessResponse("获取成功", rows))
@@ -190,7 +190,7 @@ func getWorkType(ctx *gin.Context) {
 func editWorkType(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(data))
@@ -198,13 +198,13 @@ func editWorkType(ctx *gin.Context) {
 
 	err = json.Unmarshal(data, &sysDic)
 	if err != nil {
-		ctx.JSON(200, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(200, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	h := model.SysDicMgr(db.GetDB())
 	err = h.Where("id =?", sysDic.ID).Updates(map[string]interface{}{"pid": sysDic.Pid, "type": sysDic.Type, "description": sysDic.Description}).Error
 	if err != nil {
-		ctx.JSON(200, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(200, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.JSON(200, NewEmptyDataSuccessResponse("修改成功"))
@@ -213,21 +213,21 @@ func editWorkType(ctx *gin.Context) {
 func addWorkType(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(data))
 	var dic model.SysDic
 	err = json.Unmarshal(data, &dic)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 
 		return
 	}
 	h := model.SysDicMgr(db.GetDB())
 	err = h.Create(&dic).Error
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 
 		return
 	}
@@ -240,7 +240,7 @@ func getWorkType2(ctx *gin.Context) {
 
 	err := h.Where("type =2 and pid = ?", utils.StrToInt32(ctx.Query("pid"))).Scan(&tmp.TypeList).Error
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
@@ -302,7 +302,7 @@ func gettype1Count(ctx *gin.Context) {
 	h := model.WorkContentMgr(db.GetDB())
 	err := h.Select("count(type1) as `Count`,sys_dic.description as Type1").Joins("left join sys_dic on work_content.type1=sys_dic.id").Group("type1").Order("`Count` desc").Scan(&CountType1List).Error
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 
 		return
 	}
@@ -325,7 +325,7 @@ func gettype2Count(ctx *gin.Context) {
 	h := model.WorkContentMgr(db.GetDB())
 	err := h.Select("count(type2) as `Count`,sys_dic.description as Type2").Joins("left join sys_dic on work_content.type2=sys_dic.id").Where("type1 =?", type1ID).Group("type2").Order("`Count` desc").Scan(&CountType2List).Error
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 
 		return
 	}
@@ -347,32 +347,32 @@ func downloadWorklog(ctx *gin.Context) {
 	h := model.WorkContentMgr(db.GetDB())
 	err := h.Select(" work_content.date,type1.description as type1,type2.description as type2,work_content.content").Where("date >=? and date <= ? ", dateStart, dateEnd).Joins("left JOIN sys_dic type1 ON work_content.type1=type1.id LEFT JOIN sys_dic type2 ON work_content.type2 =type2.id").Scan(&workLogList).Error
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	f := excelize.NewFile()
 	// Create a new sheet.
 	Sheet, err := f.NewSheet("Sheet1")
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
 	err = f.SetCellValue("Sheet1", "A1", "日期")
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	if err = f.SetCellValue("Sheet1", "B1", "工作大类"); err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	if err = f.SetCellValue("Sheet1", "C1", "工作大类"); err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	if err = f.SetCellValue("Sheet1", "D1", "工作类容"); err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
@@ -381,19 +381,19 @@ func downloadWorklog(ctx *gin.Context) {
 		timeTemplate := "2006-01-02"
 		// Set value of a cell.
 		if err := f.SetCellValue("Sheet1", "A"+strconv.Itoa(i), time.Unix(v.Date, 0).Format(timeTemplate)); err != nil {
-			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 			return
 		}
 		if err := f.SetCellValue("Sheet1", "B"+strconv.Itoa(i), v.Type1); err != nil {
-			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 			return
 		}
 		if err := f.SetCellValue("Sheet1", "C"+strconv.Itoa(i), v.Type2); err != nil {
-			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 			return
 		}
 		if err := f.SetCellValue("Sheet1", "D"+strconv.Itoa(i), v.Content); err != nil {
-			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 			return
 		}
 	}

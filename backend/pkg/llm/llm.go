@@ -30,7 +30,7 @@ func WorkTypes(ctx context.Context, content, workTypes string) (*types.LlmType, 
 		},
 	)
 	if err != nil {
-		log.Error("解码响应时发生错误:", err)
+		log.WithCtx(ctx).Error("解码响应时发生错误:", err)
 		return nil, err
 	}
 
@@ -64,12 +64,12 @@ func WeekWorkLog(ctx context.Context, contents string) (*types.LlmContents, erro
 		},
 	)
 	if err != nil {
-		log.Error("解码响应时发生错误:", err)
+		log.WithCtx(ctx).Error("解码响应时发生错误:", err)
 		return nil, err
 	}
 
 	Content := resp.Choices[0].Message.Content
-	log.Debug(Content)
+	log.WithCtx(ctx).Debug(Content)
 	var t types.LlmContents
 	err = json.Unmarshal([]byte(Content), &t)
 	if err != nil {

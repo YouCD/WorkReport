@@ -22,8 +22,9 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "init database.",
 	Run: func(cmd *cobra.Command, _ []string) {
-		if err := utils.InitTables(config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, username, password); err != nil {
-			log.Error(err)
+		ctx := cmd.Context()
+		if err := utils.InitTables(ctx, config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, username, password); err != nil {
+			log.WithCtx(ctx).Error(err)
 			return
 		}
 	},

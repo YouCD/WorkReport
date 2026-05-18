@@ -25,28 +25,28 @@ type JwtRespData struct {
 func Login(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(data))
 	user := User{}
 	err = json.Unmarshal(data, &user)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
 	h := model.UserTableMgr(db.GetDB())
 	u, err := h.GetFromUserName(user.Username)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
 	if PasswordVerify(user.Password, u.Password) {
 		jwtToken, err := GenerateToken(u.UserName)
 		if err != nil {
-			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+			ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 			return
 		}
 		var rsp JwtRespData

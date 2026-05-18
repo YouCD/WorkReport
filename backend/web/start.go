@@ -13,12 +13,12 @@ func StartServer(port string) {
 	router := weblib.NewGinRouter()
 	if port != "" {
 		if err := router.Run(":" + port); err != nil {
-			log.Error(err)
+			log.WithCtx(nil).Error(err)
 			return
 		}
 	}
 
 	if err := router.Run(); err != nil {
-		log.Error(err)
+		log.WithCtx(nil).Error(err)
 	}
 }

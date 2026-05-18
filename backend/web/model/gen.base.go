@@ -66,11 +66,6 @@ func (obj *_BaseMgr) SetIsRelated(b bool) {
 	obj.isRelated = b
 }
 
-// New new gorm.新gorm
-func (obj *_BaseMgr) New() *gorm.DB {
-	return obj.DB.Session(&gorm.Session{Context: obj.ctx})
-}
-
 type options struct {
 	query map[string]interface{}
 }

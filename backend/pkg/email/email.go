@@ -2,6 +2,7 @@ package email
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"net/smtp"
 	"text/template"
@@ -14,7 +15,7 @@ import (
 	"github.com/youcd/toolkit/log"
 )
 
-func SenEmail(content string) error {
+func SenEmail(ctx context.Context, content string) error {
 	e := email.NewEmail()
 	e.From = config.Cfg.Email.User
 	e.To = config.Cfg.Email.To // 收件地址
@@ -35,11 +36,11 @@ func SenEmail(content string) error {
 	}).
 		Parse(subjectTpl)
 	if err != nil {
-		log.Error("解析主题模板失败:", err)
+		log.WithCtx(ctx).Error("解析主题模板失败:", err)
 		return err
 	}
 	if err := tpl.Execute(&buf, subjectData); err != nil {
-		log.Error("渲染主题模板失败:", err)
+		log.WithCtx(ctx).Error("渲染主题模板失败:", err)
 		return err
 	}
 	e.Subject = buf.String()

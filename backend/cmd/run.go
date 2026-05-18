@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 
 	"WorkReport/common"
@@ -17,14 +16,15 @@ import (
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "run server.",
-	Run: func(_ *cobra.Command, _ []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
+		ctx := cmd.Context()
 		fmt.Printf("\r  \033[36%s\033[m  ", Logo)
 		//nolint:nosprintfhostport
 		err := common.OpenBrowser(fmt.Sprintf("http://%s:%s/#/", "127.0.0.1", config.Cfg.Global.Port))
 		if err != nil {
-			log.Error(err)
+			log.WithCtx(ctx).Error(err)
 		}
-		_, _ = mcp.ListWorkTypes(context.Background(), m.CallToolRequest{})
+		_, _ = mcp.ListWorkTypes(ctx, m.CallToolRequest{})
 		web.StartServer(config.Cfg.Global.Port)
 	},
 }

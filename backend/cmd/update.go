@@ -23,7 +23,8 @@ func init() {
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "update the WorkReport server",
-	Run: func(_ *cobra.Command, _ []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
+		ctx := cmd.Context()
 		v := common.GetRelease()
 		if Force {
 			path, _ = os.Executable()
@@ -34,9 +35,9 @@ var updateCmd = &cobra.Command{
 			common.DownloadFileProgress(v.DownloadUrl, path+".tmp")
 		}
 		if err := os.Rename(path+".tmp", path); err != nil {
-			log.Error(err)
+			log.WithCtx(ctx).Error(err)
 		}
-		log.Infof("version: %s. The version is latest version.", common.Version)
+		log.WithCtx(ctx).Infof("version: %s. The version is latest version.", common.Version)
 		return
 	},
 }

@@ -48,7 +48,7 @@ func ListWorkTypes(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallT
 	h := model.SysDicMgr(db.GetDB())
 	rows, err := h.GetFromType(1)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(ctx).Error(err)
 		return nil, err
 	}
 
@@ -58,7 +58,7 @@ func ListWorkTypes(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallT
 		var type2 []*model.SysDic
 		err = model.SysDicMgr(db.GetDB()).Where("type =2 and pid = ?", row.ID).Find(&type2).Error
 		if err != nil {
-			log.Error(err)
+			log.WithCtx(ctx).Error(err)
 			continue
 		}
 
@@ -76,7 +76,7 @@ func ListWorkTypes(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallT
 		typesCache[row] = type2
 	}
 	marshal, _ := json.Marshal(workTypes)
-	// fmt.Println(string(marshal))
+
 	return mcp.NewToolResultJSON(string(marshal))
 }
 
@@ -91,7 +91,7 @@ func AddWorkLog(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallTool
 	}
 	workTypes, err := llm.WorkTypes(ctx, c.Content, typesCacheStr())
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(ctx).Error(err)
 		return nil, err
 	}
 

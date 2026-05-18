@@ -43,13 +43,13 @@ func GetRelease() ReleaseVersion {
 	releaseUrl := ProxyUrl + GitHubReleaseUrl
 	resp, err := http.Get(releaseUrl)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(nil).Error(err)
 		return ReleaseVersion{}
 	}
 	defer resp.Body.Close()
 	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(nil).Error(err)
 		return ReleaseVersion{}
 	}
 	vList := make([]ReleaseVersion, 0)
@@ -90,30 +90,30 @@ func DownloadFileProgress(url, filename string) {
 Download:
 	//nolint:gosec
 	if url == "" {
-		log.Info("下载地址为空")
+		log.WithCtx(nil).Info("下载地址为空")
 		return
 	}
-	log.Info("完整下载地址：", ProxyUrl+url)
+	log.WithCtx(nil).Info("完整下载地址：", ProxyUrl+url)
 	r, err := http.Get(ProxyUrl + url)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(nil).Error(err)
 		goto Download
 	}
 	defer func() { _ = r.Body.Close() }()
 	f, err := os.Create(filename)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(nil).Error(err)
 		return
 	}
 	// 更改权限
 	err = f.Chmod(0o775)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(nil).Error(err)
 	}
 
 	defer func() {
 		_ = f.Close()
-		log.Info("更新退出程序.....")
+		log.WithCtx(nil).Info("更新退出程序.....")
 	}()
 	DownloadBar = progressbar.DefaultBytes(
 		r.ContentLength,

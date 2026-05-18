@@ -23,13 +23,13 @@ import (
 func addContent(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
 	var workContent types.Content
 	if err = json.Unmarshal(data, &workContent); err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	result, err := mcp.AddWorkLog(ctx, m.CallToolRequest{Params: m.CallToolParams{
@@ -37,8 +37,8 @@ func addContent(ctx *gin.Context) {
 		Arguments: workContent,
 	}})
 	if err != nil {
-		log.Error("addWorkLog", err)
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		log.WithCtx(ctx).Error("addWorkLog", err)
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.JSON(200, NewSuccessResponse("", result))
@@ -53,14 +53,14 @@ func workLogFromWeek(ctx *gin.Context) {
 	}
 
 	jsn, _ := json.Marshal(r)
-	log.Debug(string(jsn))
+	log.WithCtx(ctx).Debug(string(jsn))
 	workLog, err2 := llm.WeekWorkLog(ctx, string(jsn))
 	if err2 != nil {
-		log.Error("WeekWorkLog", err2)
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err2)))
+		log.WithCtx(ctx).Error("WeekWorkLog", err2)
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err2)))
 		return
 	}
-	log.Debug(workLog)
+	log.WithCtx(ctx).Debug(workLog)
 	funcMap := template.FuncMap{
 		"add": func(a, b int) int { return a + b },
 	}
@@ -68,15 +68,15 @@ func workLogFromWeek(ctx *gin.Context) {
 
 	parse, err := t.Parse(config.Cfg.Email.ContentTpl)
 	if err != nil {
-		log.Error("parse", err)
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		log.WithCtx(ctx).Error("parse", err)
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	var buffer bytes.Buffer
 	err = parse.ExecuteTemplate(&buffer, "workLog", workLog)
 	if err != nil {
-		log.Error("executeTemplate", err)
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		log.WithCtx(ctx).Error("executeTemplate", err)
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.JSON(200, NewSuccessResponse("", buffer.String()))
@@ -85,18 +85,18 @@ func workLogFromWeek(ctx *gin.Context) {
 func sendEmail(ctx *gin.Context) {
 	data, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 
 	var workContent types.Content
 	if err = json.Unmarshal(data, &workContent); err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
-	err = email.SenEmail(workContent.Content)
+	err = email.SenEmail(ctx, workContent.Content)
 	if err != nil {
-		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
+		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(ctx, err)))
 		return
 	}
 	ctx.JSON(200, NewEmptyDataSuccessResponse("发送成功"))

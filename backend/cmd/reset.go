@@ -3,11 +3,11 @@ package cmd
 import (
 	"WorkReport/internal/config"
 	"WorkReport/web/model/utils"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/youcd/toolkit/db"
 	"github.com/youcd/toolkit/log"
-	"gorm.io/gorm/logger"
 )
 
 func init() {
@@ -18,10 +18,11 @@ func init() {
 var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "reset the login user password",
-	Run: func(_ *cobra.Command, _ []string) {
-		db.InitDB(config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, logger.Silent)
-		if err := utils.CreateOrUpdateUser(username, password); err != nil {
-			log.Error(err)
+	Run: func(cmc *cobra.Command, _ []string) {
+		ctx := cmc.Context()
+		db.InitDB(config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, log.NewGormLogger(time.Second*1, config.Cfg.Global.LogLevel))
+		if err := utils.CreateOrUpdateUser(ctx, username, password); err != nil {
+			log.WithCtx(ctx).Error(err)
 		}
 	},
 }
