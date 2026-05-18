@@ -40,14 +40,17 @@ func GetRelease() ReleaseVersion {
 	// 系统类型
 	OS := runtime.GOOS
 	//nolint:gosec
-	resp, err := http.Get(GitHubReleaseUrl)
+	releaseUrl := ProxyUrl + GitHubReleaseUrl
+	resp, err := http.Get(releaseUrl)
 	if err != nil {
 		log.Error(err)
+		return ReleaseVersion{}
 	}
 	defer resp.Body.Close()
 	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Error(err)
+		return ReleaseVersion{}
 	}
 	vList := make([]ReleaseVersion, 0)
 	count := gjson.Get(string(bytes), "assets.#").Int()
