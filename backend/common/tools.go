@@ -18,8 +18,10 @@ import (
 const (
 	// https://api.github.com/repos/YouCD/movieSpider/releases
 	GitHubReleaseUrl = "https://api.github.com/repos/youcd/WorkReport/releases/latest"
-	ProxyUrl         = "https://ghproxy.cn/"
 )
+
+// ProxyUrl 代理地址，可通过配置文件覆盖，默认值为 https://ghproxy.cn/
+var ProxyUrl = "https://ghproxy.cn/"
 
 var commands = map[string]string{
 	"windows": "explorer.exe",

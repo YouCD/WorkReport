@@ -44,6 +44,9 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		config.ParserConfig(configFile)
+		if config.Cfg.Global.ProxyUrl != "" {
+			common.ProxyUrl = config.Cfg.Global.ProxyUrl
+		}
 		var logLevel logger.LogLevel
 		if config.Cfg.Global.LogLevel == "debug" {
 			logLevel = logger.Info

@@ -76,3 +76,4 @@ global:
   logLevel: "info"
   port: 8080
   token: youcd
+  proxyUrl: "https://ghproxy.cn/"

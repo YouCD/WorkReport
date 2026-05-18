@@ -36,6 +36,7 @@ type Global struct {
 	LogLevel string `json:"logLevel,omitempty" yaml:"logLevel"`
 	Port     string `json:"port,omitempty" yaml:"port"`
 	Token    string `json:"token,omitempty" yaml:"token"`
+	ProxyUrl string `json:"proxyUrl,omitempty" yaml:"proxyUrl"`
 }
 type config struct {
 	LLM    LLM    `json:"llm" yaml:"llm"`
