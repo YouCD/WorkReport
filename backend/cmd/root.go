@@ -1,10 +1,11 @@
 package cmd
 
 import (
-	"WorkReport/common"
-	"WorkReport/internal/config"
 	"fmt"
 	"os"
+
+	"WorkReport/common"
+	"WorkReport/internal/config"
 
 	"github.com/spf13/cobra"
 	"github.com/youcd/toolkit/db"
@@ -35,7 +36,6 @@ var rootCmd = &cobra.Command{
 	Use:  Name,
 	Long: fmt.Sprintf("%s 是用于记录工作日志的系统", Name),
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-
 		if cmd.Name() == "version" || cmd.Name() == "update" {
 			return
 		}

@@ -1,10 +1,11 @@
 package mcp
 
 import (
-	"WorkReport/internal/config"
 	"context"
 	"fmt"
 	"testing"
+
+	"WorkReport/internal/config"
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/youcd/toolkit/db"
@@ -15,6 +16,7 @@ func init() {
 	config.ParserConfig("/home/ycd/self_data/source_code/WorkReport/backend/internal/config/config.yaml")
 	db.InitDB(config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, logger.Silent)
 }
+
 func TestListWorkTypes(t *testing.T) {
 	types, err := ListWorkTypes(context.Background(), mcp.CallToolRequest{})
 	if err != nil {

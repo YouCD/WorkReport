@@ -79,9 +79,7 @@ func GetRelease() ReleaseVersion {
 	return v
 }
 
-var (
-	DownloadBar = new(progressbar.ProgressBar)
-)
+var DownloadBar = new(progressbar.ProgressBar)
 
 func DownloadFileProgress(url, filename string) {
 Download:
@@ -103,7 +101,7 @@ Download:
 		return
 	}
 	// 更改权限
-	err = f.Chmod(0775)
+	err = f.Chmod(0o775)
 	if err != nil {
 		log.Error(err)
 	}

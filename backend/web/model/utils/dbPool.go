@@ -1,9 +1,10 @@
 package utils
 
 import (
-	"WorkReport/web/model"
 	"fmt"
 	"time"
+
+	"WorkReport/web/model"
 
 	"github.com/youcd/toolkit/log"
 	"golang.org/x/crypto/bcrypt"

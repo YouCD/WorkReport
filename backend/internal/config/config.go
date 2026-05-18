@@ -44,9 +44,7 @@ type config struct {
 	Email  Email  `json:"email" yaml:"email"`
 }
 
-var (
-	Cfg config
-)
+var Cfg config
 
 func ParserConfig(configFile string) {
 	v := viper.New()

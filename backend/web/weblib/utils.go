@@ -1,12 +1,13 @@
 package weblib
 
 import (
-	"WorkReport/common"
 	"fmt"
 	"net/http"
 	"os"
 	"sync"
 	"time"
+
+	"WorkReport/common"
 
 	"github.com/youcd/toolkit/log"
 
@@ -15,9 +16,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var (
-	versionInfo = common.ReleaseVersion{}
-)
+var versionInfo = common.ReleaseVersion{}
 
 var IsUpdated bool
 

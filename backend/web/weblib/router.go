@@ -1,12 +1,13 @@
 package weblib
 
 import (
-	"WorkReport/internal/config"
-	"WorkReport/pkg/mcp"
-	"WorkReport/web/dist"
 	"embed"
 	"net/http"
 	"strings"
+
+	"WorkReport/internal/config"
+	"WorkReport/pkg/mcp"
+	"WorkReport/web/dist"
 
 	"github.com/gin-gonic/gin"
 )

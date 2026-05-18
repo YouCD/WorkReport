@@ -1,11 +1,12 @@
 package llm
 
 import (
-	"WorkReport/internal/config"
-	"WorkReport/pkg/types"
 	"context"
 	"encoding/json"
 	"fmt"
+
+	"WorkReport/internal/config"
+	"WorkReport/pkg/types"
 
 	"github.com/sashabaranov/go-openai"
 	"github.com/youcd/toolkit/log"
@@ -44,6 +45,7 @@ func WorkTypes(ctx context.Context, content, workTypes string) (*types.LlmType, 
 
 	return &t, nil
 }
+
 func WeekWorkLog(ctx context.Context, contents string) (*types.LlmContents, error) {
 	conf := openai.DefaultAnthropicConfig(config.Cfg.LLM.ApiKey, config.Cfg.LLM.BaseURL)
 	conf.APIType = openai.APITypeOpenAI

@@ -1,10 +1,11 @@
 package weblib
 
 import (
-	"WorkReport/web/model"
 	"bytes"
 	"encoding/json"
 	"io"
+
+	"WorkReport/web/model"
 
 	"github.com/gin-gonic/gin"
 	"github.com/youcd/toolkit/db"

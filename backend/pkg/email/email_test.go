@@ -1,8 +1,9 @@
 package email
 
 import (
-	"WorkReport/internal/config"
 	"testing"
+
+	"WorkReport/internal/config"
 
 	"github.com/youcd/toolkit/log"
 )
@@ -11,6 +12,7 @@ func init() {
 	config.ParserConfig("/home/ycd/self_data/source_code/WorkReport/backend/internal/config/config.local.yaml")
 	log.Init(nil)
 }
+
 func TestSenEmail(t *testing.T) {
 	//
 	//	SenEmail(`一、本周工作内容：

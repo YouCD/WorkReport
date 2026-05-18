@@ -1,13 +1,14 @@
 package mcp
 
 import (
-	"WorkReport/pkg/llm"
-	"WorkReport/pkg/types"
-	"WorkReport/web/model"
 	"context"
 	"encoding/json"
 	"errors"
 	"time"
+
+	"WorkReport/pkg/llm"
+	"WorkReport/pkg/types"
+	"WorkReport/web/model"
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/youcd/toolkit/db"
@@ -41,6 +42,7 @@ func typesCacheStr() string {
 	marshal, _ := json.Marshal(workTypes)
 	return string(marshal)
 }
+
 func ListWorkTypes(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	var workTypes []*types.ListWorkTypesItem
 	h := model.SysDicMgr(db.GetDB())
@@ -74,9 +76,10 @@ func ListWorkTypes(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallT
 		typesCache[row] = type2
 	}
 	marshal, _ := json.Marshal(workTypes)
-	//fmt.Println(string(marshal))
+	// fmt.Println(string(marshal))
 	return mcp.NewToolResultJSON(string(marshal))
 }
+
 func AddWorkLog(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	var c types.Content
 	err := request.BindArguments(&c)

@@ -8,6 +8,7 @@ import (
 func IntToStr(i int) string {
 	return strconv.Itoa(i)
 }
+
 func StrToInt32(i string) int32 {
 	pageindex, _ := strconv.Atoi(i)
 	//nolint:gosec

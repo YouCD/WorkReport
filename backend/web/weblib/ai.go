@@ -1,6 +1,11 @@
 package weblib
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
+	"text/template"
+
 	"WorkReport/internal/config"
 	"WorkReport/pkg/email"
 	"WorkReport/pkg/llm"
@@ -8,11 +13,6 @@ import (
 	"WorkReport/pkg/tools"
 	"WorkReport/pkg/types"
 	"WorkReport/web/model"
-	"bytes"
-	"encoding/json"
-	"text/template"
-
-	"io"
 
 	"github.com/gin-gonic/gin"
 	m "github.com/mark3labs/mcp-go/mcp"
@@ -49,7 +49,7 @@ func workLogFromWeek(ctx *gin.Context) {
 	result, _ := h.PagerFromWeek(tools.GetFirstDateOfWeek().Unix(), tools.GetFirstDateOfWeek().Unix()+604799)
 	r := make(map[string][]string)
 	for _, v := range result {
-		r["工作大类与子类： "+v.Type1+"-"+v.Type2] = append(r[v.Type1], v.Content)
+		r["工作大类与子类： "+v.Type1+"-"+v.Type2] = append(r["工作大类与子类： "+v.Type1+"-"+v.Type2], v.Content)
 	}
 
 	jsn, _ := json.Marshal(r)

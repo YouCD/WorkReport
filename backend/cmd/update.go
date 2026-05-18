@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"WorkReport/common"
 	"io"
 	"os"
+
+	"WorkReport/common"
 
 	"github.com/youcd/toolkit/log"
 
@@ -37,7 +38,6 @@ var updateCmd = &cobra.Command{
 		}
 		log.Infof("version: %s. The version is latest version.", common.Version)
 		return
-
 	},
 }
 

@@ -1,15 +1,16 @@
 package weblib
 
 import (
-	"WorkReport/pkg/tools"
-	"WorkReport/web/model"
-	"WorkReport/web/model/utils"
 	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
 	"strconv"
 	"time"
+
+	"WorkReport/pkg/tools"
+	"WorkReport/web/model"
+	"WorkReport/web/model/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/xuri/excelize/v2"
@@ -47,6 +48,7 @@ func NewEmptyDataSuccessResponse(msg string) *ResourceData {
 		Data: struct{}{},
 	}
 }
+
 func NewSuccessResponse(msg string, data interface{}) *ResourceData {
 	return &ResourceData{
 		Code: http.StatusOK,
@@ -55,6 +57,7 @@ func NewSuccessResponse(msg string, data interface{}) *ResourceData {
 		Data: data,
 	}
 }
+
 func NewEmptyDataErrorResponse(msg string) *ResourceData {
 	return &ResourceData{
 		Code: 1004,
@@ -65,8 +68,8 @@ func NewEmptyDataErrorResponse(msg string) *ResourceData {
 }
 
 func ErrToMsg(err error) string {
-	var msgStruct = ErrToMsgStruct{}
-	var data = []byte(err.Error())
+	msgStruct := ErrToMsgStruct{}
+	data := []byte(err.Error())
 	//nolint:musttag
 	if err2 := json.Unmarshal(data, &msgStruct); err2 != nil {
 		log.Error(err)
@@ -111,6 +114,7 @@ func addWorkLog(ctx *gin.Context) {
 
 	ctx.JSON(200, NewEmptyDataSuccessResponse("添加成功"))
 }
+
 func getWorkLog(ctx *gin.Context) {
 	PageIndex := utils.StrToInt(ctx.Query("pageIndex"))
 	PageSize := utils.StrToInt(ctx.Query("pageSize"))

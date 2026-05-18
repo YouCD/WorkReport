@@ -1,13 +1,14 @@
 package email
 
 import (
-	"WorkReport/internal/config"
-	"WorkReport/pkg/tools"
 	"bytes"
 	"crypto/tls"
 	"net/smtp"
 	"text/template"
 	"time"
+
+	"WorkReport/internal/config"
+	"WorkReport/pkg/tools"
 
 	"github.com/jordan-wright/email"
 	"github.com/youcd/toolkit/log"
@@ -18,7 +19,7 @@ func SenEmail(content string) error {
 	e.From = config.Cfg.Email.User
 	e.To = config.Cfg.Email.To // 收件地址
 
-	e.Cc = config.Cfg.Email.Cc //抄送地址
+	e.Cc = config.Cfg.Email.Cc // 抄送地址
 	// 1️⃣ 从配置读取模板和数据
 	subjectTpl := config.Cfg.Email.SubjectTpl
 	subjectData := config.Cfg.Email.SubjectData

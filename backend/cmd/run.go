@@ -1,12 +1,13 @@
 package cmd
 
 import (
+	"context"
+	"fmt"
+
 	"WorkReport/common"
 	"WorkReport/internal/config"
 	"WorkReport/pkg/mcp"
 	"WorkReport/web"
-	"context"
-	"fmt"
 
 	m "github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
@@ -25,6 +26,5 @@ var runCmd = &cobra.Command{
 		}
 		_, _ = mcp.ListWorkTypes(context.Background(), m.CallToolRequest{})
 		web.StartServer(config.Cfg.Global.Port)
-
 	},
 }

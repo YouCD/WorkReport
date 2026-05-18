@@ -45,6 +45,7 @@ func (s *MCPServer) RunWithGin(router *gin.Engine) {
 func (s *MCPServer) Init() {
 	s.RegisterTool(addWorkLog, AddWorkLog)
 }
+
 func (s *MCPServer) RegisterTool(tool mcp.Tool, handler server.ToolHandlerFunc) *MCPServer {
 	s.AddTool(tool, handler)
 	return s
