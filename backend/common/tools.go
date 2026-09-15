@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -42,12 +43,12 @@ func GetRelease() ReleaseVersion {
 	//nolint:gosec
 	resp, err := http.Get(GitHubReleaseUrl)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 	}
 	defer resp.Body.Close()
 	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 	}
 	vList := make([]ReleaseVersion, 0)
 	count := gjson.Get(string(bytes), "assets.#").Int()
@@ -87,30 +88,30 @@ func DownloadFileProgress(url, filename string) {
 Download:
 	//nolint:gosec
 	if url == "" {
-		log.Info("下载地址为空")
+		log.WithCtx(context.Background()).Info("下载地址为空")
 		return
 	}
-	log.Info("完整下载地址：", ProxyUrl+url)
+	log.WithCtx(context.Background()).Info("完整下载地址：", ProxyUrl+url)
 	r, err := http.Get(ProxyUrl + url)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 		goto Download
 	}
 	defer func() { _ = r.Body.Close() }()
 	f, err := os.Create(filename)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 		return
 	}
 	// 更改权限
 	err = f.Chmod(0o775)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 	}
 
 	defer func() {
 		_ = f.Close()
-		log.Info("更新退出程序.....")
+		log.WithCtx(context.Background()).Info("更新退出程序.....")
 	}()
 	DownloadBar = progressbar.DefaultBytes(
 		r.ContentLength,

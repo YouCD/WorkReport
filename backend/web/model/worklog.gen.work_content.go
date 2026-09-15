@@ -66,7 +66,7 @@ func (obj *_WorkContentMgr) PagerFromDate(date int64) (result []*WorkContentResp
 //nolint:revive
 func WorkContentMgr(db *gorm.DB) *_WorkContentMgr {
 	if db == nil {
-		log.Error("WorkContentMgr need init by db")
+		log.WithCtx(context.Background()).Error("WorkContentMgr need init by db")
 		os.Exit(1)
 	}
 	ctx, cancel := context.WithCancel(context.Background())

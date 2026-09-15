@@ -2,6 +2,7 @@ package email
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"net/smtp"
 	"text/template"
@@ -35,11 +36,11 @@ func SenEmail(content string) error {
 	}).
 		Parse(subjectTpl)
 	if err != nil {
-		log.Error("解析主题模板失败:", err)
+		log.WithCtx(context.Background()).Error("解析主题模板失败:", err)
 		return err
 	}
 	if err := tpl.Execute(&buf, subjectData); err != nil {
-		log.Error("渲染主题模板失败:", err)
+		log.WithCtx(context.Background()).Error("渲染主题模板失败:", err)
 		return err
 	}
 	e.Subject = buf.String()

@@ -1,0 +1,24 @@
+# 依赖
+**/node_modules
+**/bin
+
+# 构建产物
+frontend/workReport_vue/dist
+backend/web/dist/assets
+backend/web/dist/index.html
+backend/web/dist/favicon.ico
+
+# 版本控制
+.git
+.gitignore
+
+# 本地配置
+*.local
+.env
+.env.*
+
+# 日志与临时文件
+*.log
+*.tmp
+.idea
+.vscode

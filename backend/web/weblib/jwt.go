@@ -3,12 +3,12 @@ package weblib
 import (
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type MyAuth struct {
 	Username string `json:"username"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 const TokenExpireDuration = time.Hour * 24 * 8
@@ -21,9 +21,9 @@ func GenerateToken(username string) (string, error) {
 	c := MyAuth{
 		username, // 自定义字段
 		// roles,
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(), // 过期时间
-			Issuer:    "WorkLog System",                           // 签发人
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TokenExpireDuration)), // 过期时间
+			Issuer:    "WorkLog System",                                        // 签发人
 		},
 	}
 	// 使用指定的签名方法创建签名对象

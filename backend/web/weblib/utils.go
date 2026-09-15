@@ -68,12 +68,12 @@ func Update(ctx *gin.Context) {
 	wg := sync.WaitGroup{}
 	client, err := upgrade.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(ctx.Request.Context()).Error(err)
 		return
 	}
 
 	if err = client.WriteMessage(websocket.TextMessage, []byte("开始更新,请稍候...")); err != nil {
-		log.Error(err)
+		log.WithCtx(ctx.Request.Context()).Error(err)
 	}
 
 	path, _ := os.Executable()
@@ -85,7 +85,7 @@ func Update(ctx *gin.Context) {
 			common.DownloadFileProgress(versionInfo.DownloadUrl, path+".tmp")
 		}
 		if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，即将重启软件！")); err != nil {
-			log.Error(err)
+			log.WithCtx(ctx.Request.Context()).Error(err)
 		}
 		IsUpdated = true
 		wg.Done()
@@ -97,22 +97,22 @@ func Update(ctx *gin.Context) {
 			time.Sleep(time.Millisecond * 100)
 			if common.DownloadBar.State().CurrentPercent > 0 {
 				if err = client.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("更新中...已完成%.2f%%", common.DownloadBar.State().CurrentPercent*100))); err != nil {
-					log.Error(err)
+					log.WithCtx(ctx.Request.Context()).Error(err)
 				}
 			}
 			if common.DownloadBar.State().CurrentPercent == 1 {
 				if err = client.WriteMessage(websocket.TextMessage, []byte("更新完成，即将重启软件！")); err != nil {
-					log.Error(err)
+					log.WithCtx(ctx.Request.Context()).Error(err)
 				}
-				log.Info("开始重命名")
+				log.WithCtx(ctx.Request.Context()).Info("开始重命名")
 				if err = os.Rename(path+".tmp", path); err != nil {
-					log.Error(err)
+					log.WithCtx(ctx.Request.Context()).Error(err)
 					return
 				}
 				client.WriteMessage(websocket.TextMessage, []byte("即将退出"))
-				log.Info("重命名成功")
+				log.WithCtx(ctx.Request.Context()).Info("重命名成功")
 				time.Sleep(time.Second * 30)
-				log.Info("即将退出")
+				log.WithCtx(ctx.Request.Context()).Info("即将退出")
 				break
 			}
 		}

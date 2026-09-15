@@ -2,6 +2,7 @@ package weblib
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -72,8 +73,8 @@ func ErrToMsg(err error) string {
 	data := []byte(err.Error())
 	//nolint:musttag
 	if err2 := json.Unmarshal(data, &msgStruct); err2 != nil {
-		log.Error(err)
-		log.Error(err2)
+		log.WithCtx(context.Background()).Error(err)
+		log.WithCtx(context.Background()).Error(err2)
 		return err.Error()
 	}
 

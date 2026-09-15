@@ -37,7 +37,7 @@ func addContent(ctx *gin.Context) {
 		Arguments: workContent,
 	}})
 	if err != nil {
-		log.Error("addWorkLog", err)
+		log.WithCtx(ctx.Request.Context()).Error("addWorkLog", err)
 		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
 		return
 	}
@@ -53,14 +53,14 @@ func workLogFromWeek(ctx *gin.Context) {
 	}
 
 	jsn, _ := json.Marshal(r)
-	log.Debug(string(jsn))
+	log.WithCtx(ctx.Request.Context()).Debug(string(jsn))
 	workLog, err2 := llm.WeekWorkLog(ctx, string(jsn))
 	if err2 != nil {
-		log.Error("WeekWorkLog", err2)
+		log.WithCtx(ctx.Request.Context()).Error("WeekWorkLog", err2)
 		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err2)))
 		return
 	}
-	log.Debug(workLog)
+	log.WithCtx(ctx.Request.Context()).Debug(workLog)
 	funcMap := template.FuncMap{
 		"add": func(a, b int) int { return a + b },
 	}
@@ -68,14 +68,14 @@ func workLogFromWeek(ctx *gin.Context) {
 
 	parse, err := t.Parse(config.Cfg.Email.ContentTpl)
 	if err != nil {
-		log.Error("parse", err)
+		log.WithCtx(ctx.Request.Context()).Error("parse", err)
 		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
 		return
 	}
 	var buffer bytes.Buffer
 	err = parse.ExecuteTemplate(&buffer, "workLog", workLog)
 	if err != nil {
-		log.Error("executeTemplate", err)
+		log.WithCtx(ctx.Request.Context()).Error("executeTemplate", err)
 		ctx.JSON(500, NewEmptyDataErrorResponse(ErrToMsg(err)))
 		return
 	}

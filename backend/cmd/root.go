@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"WorkReport/common"
 	"WorkReport/internal/config"
@@ -11,7 +13,7 @@ import (
 	"github.com/youcd/toolkit/db"
 	"github.com/youcd/toolkit/file"
 	"github.com/youcd/toolkit/log"
-	"gorm.io/gorm/logger"
+	toolkitlog "github.com/youcd/toolkit/log"
 )
 
 // var cfgFile string
@@ -47,13 +49,7 @@ var rootCmd = &cobra.Command{
 		if config.Cfg.Global.ProxyUrl != "" {
 			common.ProxyUrl = config.Cfg.Global.ProxyUrl
 		}
-		var logLevel logger.LogLevel
-		if config.Cfg.Global.LogLevel == "debug" {
-			logLevel = logger.Info
-		} else {
-			logLevel = logger.Silent
-		}
-		db.InitDB(config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, logLevel)
+		db.InitDB(config.Cfg.DB.User, config.Cfg.DB.Pwd, config.Cfg.DB.Host, config.Cfg.DB.Port, config.Cfg.DB.Name, toolkitlog.NewGormLogger(time.Second, config.Cfg.Global.LogLevel))
 		log.Init(nil)
 		log.SetLogLevel(config.Cfg.Global.LogLevel)
 	},
@@ -64,7 +60,7 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 		os.Exit(1)
 	}
 }

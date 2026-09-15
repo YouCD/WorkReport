@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"io"
 	"os"
 
@@ -34,9 +35,9 @@ var updateCmd = &cobra.Command{
 			common.DownloadFileProgress(v.DownloadUrl, path+".tmp")
 		}
 		if err := os.Rename(path+".tmp", path); err != nil {
-			log.Error(err)
+			log.WithCtx(context.Background()).Error(err)
 		}
-		log.Infof("version: %s. The version is latest version.", common.Version)
+		log.WithCtx(context.Background()).Infof("version: %s. The version is latest version.", common.Version)
 		return
 	},
 }

@@ -22,7 +22,7 @@ var runCmd = &cobra.Command{
 		//nolint:nosprintfhostport
 		err := common.OpenBrowser(fmt.Sprintf("http://%s:%s/#/", "127.0.0.1", config.Cfg.Global.Port))
 		if err != nil {
-			log.Error(err)
+			log.WithCtx(context.Background()).Error(err)
 		}
 		_, _ = mcp.ListWorkTypes(context.Background(), m.CallToolRequest{})
 		web.StartServer(config.Cfg.Global.Port)

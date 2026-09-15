@@ -17,7 +17,7 @@ type _SysDicMgr struct {
 //nolint:revive
 func SysDicMgr(db *gorm.DB) *_SysDicMgr {
 	if db == nil {
-		log.Error("SysDicMgr need init by db")
+		log.WithCtx(context.Background()).Error("SysDicMgr need init by db")
 		os.Exit(1)
 	}
 	ctx, cancel := context.WithCancel(context.Background())

@@ -1,6 +1,7 @@
 package web
 
 import (
+	"context"
 	"fmt"
 
 	"WorkReport/web/weblib"
@@ -13,12 +14,12 @@ func StartServer(port string) {
 	router := weblib.NewGinRouter()
 	if port != "" {
 		if err := router.Run(":" + port); err != nil {
-			log.Error(err)
+			log.WithCtx(context.Background()).Error(err)
 			return
 		}
 	}
 
 	if err := router.Run(); err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 	}
 }

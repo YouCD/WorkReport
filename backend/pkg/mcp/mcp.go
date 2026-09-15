@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +27,8 @@ func NewMCPServer(token string) *MCPServer {
 }
 
 func (s *MCPServer) RunWithGin(router *gin.Engine) {
-	stream := server.NewStreamableHTTPServer(s.MCPServer, server.WithLogger(log.GetLogger()))
+	slogLogger := slog.New(&log.ZapSlogAdapter{Logger: log.GetLogger()})
+	stream := server.NewStreamableHTTPServer(s.MCPServer, server.WithStreamableHTTPLogger(slogLogger))
 	s.Init()
 	// 将MCP处理程序注册到Gin路由器
 	router.Any("/mcp", func(c *gin.Context) {

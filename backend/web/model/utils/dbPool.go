@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -24,21 +25,21 @@ func InitTables(user, pwd, host, port, name, username, password string) error {
 	_db, err = gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	// db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4").Migrator().CreateTable(&model.UserTable{})
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 		return fmt.Errorf("Open error %w", err)
 	}
 	err = _db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4").AutoMigrate(&model.SysDic{}, &model.UserTable{}, &model.WorkContent{})
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 		return fmt.Errorf("AutoMigrate error %w", err)
 	}
 
 	err = CreateOrUpdateUser(username, password)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 		return fmt.Errorf("CreateOrUpdateUser error %w", err)
 	}
-	log.Infof("The default username is %s password is %s", username, password)
+	log.WithCtx(context.Background()).Infof("The default username is %s password is %s", username, password)
 	return nil
 }
 
@@ -51,12 +52,12 @@ func CreateOrUpdateUser(username, password string) error {
 	var userModel model.UserTable
 	err := _db.Model(&model.UserTable{}).Where("user_name =?", username).Scan(&userModel).Error
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 		return fmt.Errorf("Scan error %w", err)
 	}
 	hashPW, err := PasswordHash(password)
 	if err != nil {
-		log.Error(err)
+		log.WithCtx(context.Background()).Error(err)
 		return fmt.Errorf("PasswordHash error %w", err)
 	}
 	if userModel.UserName == "" {
@@ -67,13 +68,13 @@ func CreateOrUpdateUser(username, password string) error {
 		}
 		err = _db.Create(&user).Error
 		if err != nil {
-			log.Error(err)
+			log.WithCtx(context.Background()).Error(err)
 			return fmt.Errorf("Create error %w", err)
 		}
 	} else if userModel.UserName != "" {
 		err = _db.Model(&model.UserTable{}).Where("user_name = ?", username).Update("password", hashPW).Error
 		if err != nil {
-			log.Error(err)
+			log.WithCtx(context.Background()).Error(err)
 			return fmt.Errorf("Update error %w", err)
 		}
 	}
