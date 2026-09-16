@@ -4,24 +4,61 @@ on:
   push:
     tags:
       - 'v*'
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # 与 Dockerfile 保持一致, 加速国内网络环境下的依赖拉取
+      GOPROXY: https://goproxy.cn,direct
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Go
-        uses: actions/setup-go@v3
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          go-version: 1.24.5
+          # 拉取全部 tag, 保证 ldflags 版本注入的 git describe --tags 可用
+          fetch-depth: 0
 
-      - name: Build
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          # 直接读取 backend/go.mod 中的 go 指令, 避免版本漂移
+          go-version-file: backend/go.mod
+          cache-dependency-file: backend/go.sum
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-file: frontend/workReport_vue/package-lock.json
+
+      - name: Install upx
         run: |
-          bash backend/build.sh
-          cd backend
-          make build-all
+          sudo apt-get update
+          sudo apt-get install -y upx-ucl
+
+      - name: Build frontend
+        run: |
+          cd frontend/workReport_vue
+          npm config set registry https://registry.npmmirror.com
+          npm ci
+          npm run build
+        # 产物输出到 backend/web/dist, 由 go:embed 内嵌进单二进制
+
+      - name: Build backend (all platforms)
+        run: |
+          # bin 目录被 gitignore, CI 中不存在, 而 go build -o 不会自动建目录
+          mkdir -p backend/bin
+          make backend-linux backend-darwin backend-win
+          # 与本地 make build-all 行为一致: upx 压缩产物
+          upx backend/bin/WorkReport-*
+
+      - name: Show artifacts
+        run: ls -lh backend/bin
+
       - name: Release
         uses: softprops/action-gh-release@v2
-        if: github.ref_type == 'tag'  # 仅在打标签时运行
-        with: # 将下述可执行文件 release 上去
+        with:
           files: |
             backend/bin/*
+          generate_release_notes: true

@@ -1,22 +1,25 @@
 <template>
   <a-layout id="components-layout-demo-responsive">
-    <Sider></Sider>
+    <Sider ref="siderRef"></Sider>
     <a-layout>
-      <a-layout-header :style="{ background: '#fff', padding: 0 }">
-        <div style="padding: 0px 23px">
+      <a-layout-header class="layout-header">
+        <div class="header-inner">
+          <a-button v-if="isMobile" type="text" class="menu-toggle" aria-label="打开菜单" @click="siderRef?.toggleDrawer()">
+            <MenuUnfoldOutlined/>
+          </a-button>
           <!--                    <a v-if="msg.flag" style="float:right;padding-right: 20px" :href="msg.data.download_url">{{msg.msg}}</a>-->
           <a v-if="showUpdate" style="float:right;padding-right: 20px" @click="UpdateHandler">{{ msg }}</a>
           <a v-if="!showUpdate" style="float:right;padding-right: 20px">{{ msg }}</a>
           <!--                    <msg :lists="msg" style="float:right;padding-right: 20px"></msg>-->
         </div>
       </a-layout-header>
-      <a-layout-content :style="{ margin: '24px 16px 0' }">
-        <div :style="{ padding: '12px', minHeight: '790px' ,height:'100%'}">
+      <a-layout-content class="layout-content">
+        <div class="layout-content-inner">
           <router-view :key="$route.fullPath"/>
         </div>
 
       </a-layout-content>
-      <a-layout-footer style="text-align: center">
+      <a-layout-footer class="layout-footer">
         WorkLogSystem ©2021 Created by YouCD
       </a-layout-footer>
     </a-layout>
@@ -26,12 +29,16 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import Sider from '@/components/LayoutBase/Sider.vue'
-import { UserOutlined } from '@ant-design/icons-vue'
+import { UserOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue'
+import { useIsMobile } from '@/utils/useIsMobile'
 
 import { UpdateCheck } from "@/components/api/worklog";
 
 const router = useRouter()
 const route = useRoute()
+
+const { isMobile } = useIsMobile()
+const siderRef = ref<InstanceType<typeof Sider> | null>(null)
 
 const uid = ref("我是谁？")
 const breadList = ref<unknown[]>([])
@@ -129,5 +136,53 @@ watch(route, () => {
 <style scoped>
 #components-layout-demo-responsive {
     min-height: 100vh;
+}
+
+.layout-header {
+    background: #fff;
+    padding: 0;
+}
+
+.header-inner {
+    padding: 0 23px;
+}
+
+.menu-toggle {
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+.layout-content {
+    margin: 24px 16px 0;
+}
+
+.layout-content-inner {
+    padding: 12px;
+    min-height: 790px;
+    height: 100%;
+}
+
+.layout-footer {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .header-inner {
+        padding: 0 8px;
+    }
+
+    .layout-content {
+        margin: 8px;
+    }
+
+    .layout-content-inner {
+        padding: 8px;
+        min-height: 0;
+    }
+
+    .layout-footer {
+        padding: 12px 0;
+        font-size: 12px;
+    }
 }
 </style>

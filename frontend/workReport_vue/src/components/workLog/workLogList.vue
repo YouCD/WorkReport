@@ -61,7 +61,15 @@
       <a-card :bordered="false" class="card-box search-card">
         <a-form class="search-form" :layout="'inline'">
           <a-form-item class="search-flex">
-            <a-range-picker :locale="locale" v-model:value="exportFormData.dateRange"
+            <div v-if="isMobile" class="mobile-range">
+              <a-date-picker style="width: 100%" placeholder="开始日期"
+                             v-model:value="exportFormData.dateStart"
+                             @change="exportRangeChange"/>
+              <a-date-picker style="width: 100%" placeholder="结束日期"
+                             v-model:value="exportFormData.dateEnd"
+                             @change="exportRangeChange"/>
+            </div>
+            <a-range-picker v-else :locale="locale" v-model:value="exportFormData.dateRange"
                             @change="dateRangeChange"/>
           </a-form-item>
           <a-form-item>
@@ -113,7 +121,7 @@
       </a-card>
     </div>
 
-    <a-modal v-model:open="editWorkLog" title="编辑工作日志" @ok="editWorkLogHandler" cancelText="取消" okText="确认">
+    <a-modal v-model:open="editWorkLog" :width="editModalWidth" title="编辑工作日志" @ok="editWorkLogHandler" cancelText="取消" okText="确认">
           <a-form :model="editForm" :label-col="labelCol" :wrapper-col="wrapperCol" :rules="rules"
                         ref="editModalRuleForm">
             <a-form-item label="日期" name="date">
@@ -149,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, h } from 'vue'
+import { ref, reactive, computed, onMounted, watch, h } from 'vue'
 import { message } from 'ant-design-vue'
 import dayjs from "dayjs"
 import {
@@ -171,8 +179,12 @@ import locale from "ant-design-vue/lib/date-picker/locale/zh_CN";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import 'dayjs/locale/zh-cn';
 import AiIcon from "@/components/iconfont/AiIcon.vue";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 dayjs.locale('zh-cn');
+
+const { isMobile } = useIsMobile()
+const editModalWidth = computed(() => (isMobile.value ? '92vw' : 520))
 
 const columns: any[] = [
   {
@@ -279,6 +291,8 @@ const showAddWorkLog = ref(false)
 
 const exportFormData = reactive<any>({
   dateRange: undefined,
+  dateStart: undefined,
+  dateEnd: undefined,
 })
 const dateRange = reactive<any>({
   dateStart: undefined,
@@ -572,17 +586,13 @@ function onClose() {
   visible.value = false;
 }
 
-function isMobile() {
-  let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
-  return flag;
-}
 function layoutHandler() {
-  if (!isMobile()) {
+  if (!isMobile.value) {
     layout.value = "inline"
     is_Mobile.value = false
     showSearch.value = true
     showAddWorkLog.value = true
-  } else if (isMobile()) {
+  } else if (isMobile.value) {
     layout.value = "horizontal"
     is_Mobile.value = true
     showWorkType.value = true
@@ -606,6 +616,10 @@ function dateRangeChange(date: any) {
   }
   dateRange.dateStart = date[0].unix()
   dateRange.dateEnd = date[1].unix()
+}
+function exportRangeChange() {
+  dateRange.dateStart = exportFormData.dateStart ? exportFormData.dateStart.unix() : undefined
+  dateRange.dateEnd = exportFormData.dateEnd ? exportFormData.dateEnd.unix() : undefined
 }
 function exportWorkLogHandler() {
   if (dateRange.dateStart === undefined || dateRange.dateEnd === undefined) {
@@ -748,21 +762,64 @@ onMounted(() => {
     height: 350px;
 }
 
-@media (max-width: 768px) {
-    .wlog-wrap {
-        flex-direction: column;
-    }
+  .mobile-range {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+  }
 
-    .wlog-left {
-        flex: 0 0 auto;
-        width: 100%;
-    }
+  @media (max-width: 768px) {
+      .wlog-wrap {
+          flex-direction: column;
+          gap: 16px;
+          padding: 0;
+      }
 
-    .wlog-right {
-        width: 100%;
-    }
-}
-</style>
+      .wlog-left,
+      .wlog-right {
+          flex: 0 0 auto;
+          width: 100%;
+          gap: 16px;
+      }
+
+      .wlog-form-row {
+          flex-direction: column;
+          gap: 0;
+      }
+
+      .wlog-btn-row {
+          flex-wrap: wrap;
+          row-gap: 8px;
+      }
+
+      .wlog-btn-row > :deep(.ant-btn) {
+          flex: 1 1 calc(50% - 4px);
+          min-width: 0;
+      }
+
+      .wlog-content-textarea :deep(.ant-input) {
+          height: 220px;
+      }
+
+      .search-form {
+          flex-wrap: wrap;
+      }
+
+      .search-form .search-flex {
+          flex: 1 1 100%;
+      }
+
+      .search-form > .ant-form-item:not(.search-flex) {
+          width: 100%;
+          margin-bottom: 0;
+      }
+
+      .search-form > .ant-form-item:not(.search-flex) .ant-btn {
+          width: 100%;
+      }
+  }
+  </style>
 
 <style>
 .wlog-btn-row .ant-btn > .iconfont {

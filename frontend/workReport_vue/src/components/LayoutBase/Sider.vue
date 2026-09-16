@@ -1,5 +1,7 @@
 <template>
     <a-layout-sider
+            v-if="!isMobile"
+            class="app-sider"
             v-model:collapsed="collapsed"
             breakpoint="lg"
             collapsible
@@ -9,28 +11,9 @@
             @breakpoint="onBreakpoint"
     >
         <div class="sider-inner">
-            <a-menu theme="dark" mode="inline" :inline-collapsed="collapsed" class="sider-menu">
-                <a-menu-item key="1">
-                    <template #icon><span class="iconfont icon-tubiao"></span></template>
-                    <router-link to='/home'><span>Home</span></router-link>
-                </a-menu-item>
-                <a-sub-menu key="log">
-                    <template #icon><span class="iconfont icon-rizhi"></span></template>
-                    <template #title><span>日志</span></template>
-                    <a-menu-item key="/workLogList">
-                        <template #icon><UnorderedListOutlined /></template>
-                        <router-link to='/workLogList'><span>日志浏览</span></router-link>
-                    </a-menu-item>
-                </a-sub-menu>
-                <a-sub-menu key="sys">
-                    <template #icon><span class="iconfont icon-shezhi"></span></template>
-                    <template #title><span>系统设置</span></template>
-                    <a-menu-item key="/sys/sysDic">
-                        <template #icon><span class="iconfont icon-zidian"></span></template>
-                        <router-link to='/sys/sysDic'><span>字典设置</span></router-link>
-                    </a-menu-item>
-                </a-sub-menu>
-            </a-menu>
+            <div class="sider-menu-wrap">
+                <SiderMenu :collapsed="collapsed"/>
+            </div>
             <div class="sider-footer" @click="toggleCollapsed">
                 <MenuFoldOutlined v-if="!collapsed" />
                 <MenuUnfoldOutlined v-else />
@@ -38,18 +21,31 @@
             </div>
         </div>
     </a-layout-sider>
+    <a-drawer
+            v-else
+            v-model:open="drawerOpen"
+            placement="left"
+            :width="260"
+            :closable="false"
+            :body-style="{ padding: 0, background: '#001529' }"
+    >
+        <SiderMenu @navigate="drawerOpen = false"/>
+    </a-drawer>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import {
-    UnorderedListOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
 } from '@ant-design/icons-vue'
-import '@/assets/iconfont/iconfont.css'
+import SiderMenu from '@/components/LayoutBase/SiderMenu.vue'
+import { useIsMobile } from '@/utils/useIsMobile'
+
+const { isMobile } = useIsMobile()
 
 const collapsed = ref(false)
+const drawerOpen = ref(false)
 const isSecretAdmin = ref(false)
 const isSealAdmin = ref(false)
 
@@ -62,6 +58,9 @@ function onBreakpoint(_broken: boolean) {
 function toggleCollapsed() {
     collapsed.value = !collapsed.value
 }
+function toggleDrawer() {
+    drawerOpen.value = !drawerOpen.value
+}
 function rolesHandler() {
     if (localStorage.getItem("role") === "secretadmin") {
         isSecretAdmin.value = true
@@ -73,15 +72,24 @@ function rolesHandler() {
 onMounted(() => {
     rolesHandler()
 })
+
+defineExpose({ toggleDrawer })
 </script>
 
 <style scoped>
+/* 整页滚动时让 sider 固定在视口, 收起按钮不随页面滚动 */
+.app-sider {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-self: flex-start;
+}
 .sider-inner {
     display: flex;
     flex-direction: column;
     height: 100vh;
 }
-.sider-menu {
+.sider-menu-wrap {
     flex: 1;
     overflow-y: auto;
 }

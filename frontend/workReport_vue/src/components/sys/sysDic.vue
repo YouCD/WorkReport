@@ -62,7 +62,7 @@
             </a-card>
         </div>
 
-        <a-modal v-model:open="editTypeModal" title="修改工作类别" cancelText="取消" okText="确认" @ok="editTypeHandleOk">
+        <a-modal v-model:open="editTypeModal" :width="editModalWidth" title="修改工作类别" cancelText="取消" okText="确认" @ok="editTypeHandleOk">
             <a-form :model="TypeData" :label-col="labelCol" :wrapper-col="wrapperCol" :rules="rules1"
                           ref="editRuleForm">
                 <a-form-item label="类别名称" name="description">
@@ -83,12 +83,16 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, reactive, onMounted } from 'vue'
+    import { ref, reactive, computed, onMounted } from 'vue'
     import { message } from 'ant-design-vue'
     import { addWorkType } from '../api/sysdic'
     import { getWorkType1, getWorkType2 } from "@/components/api/worklog";
     import { getWorkType, editWorkType } from "@/components/api/sysdic";
     import { PlusCircleOutlined, EditOutlined, MinusCircleOutlined } from '@ant-design/icons-vue'
+    import { useIsMobile } from "@/utils/useIsMobile";
+
+    const { isMobile } = useIsMobile()
+    const editModalWidth = computed(() => (isMobile.value ? '92vw' : 520))
 
     const ruleForm = ref()
     const ruleForm2 = ref()
@@ -205,10 +209,28 @@
     }
 
     const onSelect = (selectedKeys: any, info: any) => {
-        console.log(selectedKeys)
         queryParam.value = {
             orgId: selectedKeys[0]
         };
+        // 移动端没有右键, 点选节点时直接展示操作栏
+        if (isMobile.value) {
+            const node = info.node
+            selectID.value = node.eventKey
+            NodeTreeItem.value = {
+                pageX: 0,
+                pageY: 0,
+                id: node.eventKey,
+                title: node.title,
+                parentOrgId: node.parentOrgId || null
+            };
+            tmpStyle.value = {
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                gap: 8,
+                marginTop: 8,
+            };
+        }
     }
 
     const onRightClick = (e: any, node: any) => {
@@ -234,7 +256,7 @@
     }
 
     const clearMenu = () => {
-        // NodeTreeItem.value = null;
+        NodeTreeItem.value = null;
     }
 
     const orgAdd = () => {
@@ -281,14 +303,8 @@
         });
     }
 
-    const isMobile = () => {
-        let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
-        return flag;
-    }
-
     onMounted(() => {
         getWorkType1Handler()
-        isMobile();
     })
 </script>
 
@@ -343,19 +359,41 @@
     border-radius: 4px;
 }
 
-@media (max-width: 768px) {
-    .dic-wrap {
-        flex-direction: column;
-    }
+    @media (max-width: 768px) {
+        .dic-wrap {
+            flex-direction: column;
+            gap: 16px;
+            padding: 0;
+        }
 
-    .dic-left {
-        flex: 0 0 auto;
-        width: 100%;
-    }
+        .dic-left {
+            flex: 0 0 auto;
+            width: 100%;
+            height: auto;
+        }
 
-    .dic-right {
-        width: 100%;
-        max-width: none;
+        .dic-right {
+            width: 100%;
+            max-width: none;
+            gap: 16px;
+        }
+
+        .dic-form-inline {
+            flex-wrap: wrap;
+        }
+
+        .dic-form-inline .dic-flex-item {
+            flex: 1 1 100%;
+            margin-bottom: 12px;
+        }
+
+        .dic-form-inline > .ant-form-item:not(.dic-flex-item) {
+            flex: 1 1 100%;
+            margin-bottom: 0;
+        }
+
+        .dic-form-inline > .ant-form-item:not(.dic-flex-item) .ant-btn {
+            width: 100%;
+        }
     }
-}
 </style>

@@ -41,6 +41,19 @@ function buildBarOption(data: any[], field: string) {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
+      // 每个类别是独立 series, axis 触发会列出全部 series(空值显示为 -), 这里过滤掉空值
+      formatter: (params: any) => {
+        const list = (Array.isArray(params) ? params : [params]).filter(p => p.value !== null && p.value !== undefined);
+        if (list.length === 0) {
+          return (Array.isArray(params) ? params[0] : params)?.axisValue ?? ''
+        }
+        const title = list[0].axisValue
+        if (list.length === 1) {
+          return `${title}：${list[0].value}`
+        }
+        const lines = list.map(p => `${p.marker} ${p.name}：${p.value}`)
+        return [title, ...lines].join('<br/>')
+      },
     },
     legend: {
       type: 'scroll',
@@ -59,6 +72,8 @@ function buildBarOption(data: any[], field: string) {
       name,
       type: 'bar',
       barWidth: '45%',
+      // 多个 series 默认分组并排, 导致柱子不在类目中心; -100% 让各 series 叠加到同一位置
+      barGap: '-100%',
       data: names.map((n, j) => (j === i ? { value: values[j], itemStyle: { color: palette[i % palette.length], borderRadius: [12, 12, 0, 0] } } : null)),
     })),
   };
@@ -74,7 +89,7 @@ function buildPieOption(data: any[]) {
     },
     series: [{
       type: 'pie',
-      radius: ['40%', '62%'],
+      radius: ['45%', '78%'],
       center: ['40%', '50%'],
       avoidLabelOverlap: true,
       itemStyle: { borderRadius: 4, borderColor: '#fff', borderWidth: 1 },
@@ -85,7 +100,7 @@ function buildPieOption(data: any[]) {
       type: 'text',
       left: '34%',
       top: 'middle',
-      style: { text: '工作占比', fill: '#666', fontSize: 16, fontWeight: 'bold', textAlign: 'center' },
+      style: { text: '工作占比', fill: '#000', fontSize: 16, fontWeight: 'bold', textAlign: 'center' },
     }],
   };
 }
